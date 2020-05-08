@@ -17,15 +17,34 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rcl_interfaces REQUIRED)
+set(cpprestsdk_DIR /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/cmake/)
+find_package(OpenSSL REQUIRED)
+find_package(cpprestsdk REQUIRED)
+find_package(Boost REQUIRED COMPONENTS system filesystem thread)
 
 include_directories(
   include
+  ${Boost_INCLUDE_DIRS}
 )
 
-add_executable(rosrect-listener-agent src/listener_agent.cpp)
-ament_target_dependencies(rosrect-listener-agent rclcpp rcl_interfaces)
+# add_library(rosrect-listener-agent-lib src/backend_api.cpp src/robot_event.cpp src/state_manager.cpp)
+# target_link_libraries(
+#   rosrect-listener-agent-lib
+#   cpprestsdk::cpprest
+# )
+
+add_executable(rosrect-listener-agent src/listener_agent.cpp src/backend_api.cpp src/robot_event.cpp src/state_manager.cpp)
+target_link_libraries(
+  rosrect-listener-agent
+  # rosrect-listener-agent-lib
+  cpprestsdk::cpprest
+  ${Boost_LIBRARIES}
+)
+
+ament_target_dependencies(rosrect-listener-agent rclcpp rcl_interfaces ament_index_cpp)
 
 install(TARGETS
    rosrect-listener-agent
