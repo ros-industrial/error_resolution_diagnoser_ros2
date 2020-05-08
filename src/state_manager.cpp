@@ -1,5 +1,8 @@
 #include <rosrect-listener-agent/state_manager.h>
 
+using namespace web::json;                  // JSON features
+using namespace web;                        // Common features like URIs.
+
 StateManager::StateManager(){
 
     // Boolean flag to decide whether to suppress a message or not
@@ -27,7 +30,7 @@ std::vector<std::string> StateManager::does_exist(std::string robot_code, std::s
     return emptyString;
 }
 
-void StateManager::check_message(std::string agent_type, std::string robot_code, const rosgraph_msgs::Log::ConstPtr& data){
+void StateManager::check_message(std::string agent_type, std::string robot_code, const rcl_interfaces::msg::Log::SharedPtr data){
 
     if(agent_type == "DB"){
         // std::cout << "Checking with DB..." << std::endl;
@@ -126,14 +129,14 @@ void StateManager::check_message_db(std::string robot_code, const rosgraph_msgs:
 }
 */
 
-void StateManager::check_message_ros(std::string robot_code, const rosgraph_msgs::Log::ConstPtr& data){
+void StateManager::check_message_ros(std::string robot_code, const rcl_interfaces::msg::Log::SharedPtr data){
 
-    if(data->level == 8){
+    if(data->level == data->ERROR){
         // std::cout << "Error... " << data->msg << std::endl;
         // Check for suppression
         this->check_error(robot_code,data->msg);
     }
-    else if(data->level ==4){
+    else if(data->level == data->WARN){
         // std::cout << "Warning... " << data->msg << std::endl;
         // Check for suppression
         this->check_warning(robot_code, data->msg);

@@ -1,11 +1,14 @@
 #include <rosrect-listener-agent/robot_event.h>
 
+using namespace web::json;                  // JSON features
+using namespace web;                        // Common features like URIs.
+
 RobotEvent::RobotEvent(){
 
     this->event_id_str = "";
 }
 
-void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr& data, json::value msg_info){
+void RobotEvent::update_log(const rcl_interfaces::msg::Log::SharedPtr data, json::value msg_info){
     // std::cout << "Event log updating..." << std::endl;
     // Each message has a queue id
     this->queue_id += 1;
@@ -35,10 +38,10 @@ void RobotEvent::update_log(const rosgraph_msgs::Log::ConstPtr& data, json::valu
         source = data->name;
 
         // Assign level
-        if(data->level == 8){
+        if(data->level == data->ERROR){
             level = "Error";
         }
-        else if(data->level ==4){
+        else if(data->level == data->WARN){
             level = "Warning";
         }
         else{

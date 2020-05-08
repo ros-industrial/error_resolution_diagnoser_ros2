@@ -32,12 +32,11 @@ cs_listener::~cs_listener()
 
 void cs_listener::log_callback(const rcl_interfaces::msg::Log::SharedPtr rosmsg)
 {
-  // Callback that hands over message to State Manager
-  // this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg);
-
   if (rosmsg->name != "rviz2")
   {
-    std::cout << "Message received: " << rosmsg->msg << std::endl;
+    // std::cout << "Message received: " << rosmsg->msg << std::endl;
+    // Callback that hands over message to State Manager
+    this->state_manager_instance.check_message(this->agent_type, this->robot_code, rosmsg);
   }
 }
 

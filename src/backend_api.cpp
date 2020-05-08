@@ -1,5 +1,13 @@
 #include <rosrect-listener-agent/backend_api.h>
 
+using namespace utility;                    // Common utilities like string conversions
+using namespace web;                        // Common features like URIs.
+using namespace web::http;                  // Common HTTP functionality
+using namespace web::http::client;          // HTTP client features
+using namespace concurrency::streams;       // Asynchronous streams
+using namespace ::pplx;                     // PPLX for tasks
+using namespace web::json;                  // JSON features
+
 BackendApi::BackendApi() {
 
   // std::cout << "Creating API instance..." << std::endl;
@@ -11,13 +19,15 @@ BackendApi::BackendApi() {
   this->agent_mode = std::getenv("AGENT_MODE");
 
   // File variables
-  std::string package_path = ros::package::getPath("rosrect-listener-agent");
+  std::string package_path = ament_index_cpp::get_package_prefix("rosrect-listener-agent");
+  int install_pos = package_path.find("install");
+  package_path.replace(install_pos, 7, "src");
   this->log_name = package_path + "/test/logs/logData";
   this->log_ext = ".json";
   this->log_id = 0;
 
   if(this->agent_mode == "TEST"){
-    std::cout << "TEST mode is ON. JSON Logs will be saved here: " << package_path + "/tests/logs/" << std::endl;
+    std::cout << "TEST mode is ON. JSON Logs will be saved here: " << package_path + "/test/logs/" << std::endl;
   }
 
   /* Error classification features in development below
