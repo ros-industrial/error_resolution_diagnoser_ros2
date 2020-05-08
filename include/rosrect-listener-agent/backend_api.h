@@ -10,15 +10,7 @@
 #include <algorithm>
 #include <cpprest/containerstream.h>
 #include <cpprest/producerconsumerstream.h>
-#include <ros/package.h>
-
-using namespace utility;                    // Common utilities like string conversions
-using namespace web;                        // Common features like URIs.
-using namespace web::http;                  // Common HTTP functionality
-using namespace web::http::client;          // HTTP client features
-using namespace concurrency::streams;       // Asynchronous streams
-using namespace ::pplx;                     // PPLX for tasks
-using namespace web::json;                  // JSON features
+#include <ament_index_cpp/get_package_prefix.hpp>
 
 class BackendApi {
   // This class provides access to Error Classification API and event log creation through C++.
@@ -40,7 +32,7 @@ class BackendApi {
   BackendApi();
   ~BackendApi();
   void push_event_log(std::vector<std::vector<std::string>>); // Create and push single JSON record payload data for downstream consumption
-  json::value create_event_log(std::vector<std::vector<std::string>>); // Create JSON "multiple record" payload data for downstream consumption
+  web::json::value create_event_log(std::vector<std::vector<std::string>>); // Create JSON "multiple record" payload data for downstream consumption
   /* Error classification features in development below
   pplx::task<void> query_error_classification(std::string); // Query error classification database table
   json::value check_error_classification(std::string); // Entry point for error classification

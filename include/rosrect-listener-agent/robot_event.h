@@ -5,10 +5,7 @@
 #include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
 #include <boost/date_time.hpp>
 #include <cpprest/json.h>
-#include <rosgraph_msgs/Log.h>
-
-using namespace web::json;                  // JSON features
-using namespace web;                        // Common features like URIs.
+#include <rcl_interfaces/msg/log.hpp>
 
 class RobotEvent {
 
@@ -26,7 +23,7 @@ class RobotEvent {
 
     public:
     RobotEvent();
-    void update_log(const rosgraph_msgs::Log::ConstPtr&, web::json::value); // Append to event log
+    void update_log(const rcl_interfaces::msg::Log::SharedPtr, web::json::value); // Append to event log
     void update_event_id(); // Update event id, create and udpate if necessary
     std::vector<std::vector<std::string>> get_log(); // Return event log
     void clear_log(); // Clear only event log

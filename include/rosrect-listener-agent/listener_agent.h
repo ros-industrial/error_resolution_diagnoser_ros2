@@ -1,14 +1,14 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rcl_interfaces/msg/log.hpp>
 #include <iostream>
-// #include <rosrect-listener-agent/state_manager.h>
+#include <rosrect-listener-agent/state_manager.h>
 
 class cs_listener : public rclcpp::Node
 {
 
     std::string agent_type; // DB or ROS agent
     std::string robot_code; // UUID supplied during setup
-    // StateManager state_manager_instance; // State manager object that processes all incoming messages
+    StateManager state_manager_instance; // State manager object that processes all incoming messages
     rclcpp::Subscription<rcl_interfaces::msg::Log>::SharedPtr rosout_subscription;
 
 public:
