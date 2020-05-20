@@ -21,7 +21,7 @@ cs_listener::cs_listener()
   }
 
   // Create subscription
-  this->rosout_subscription = this->create_subscription<rcl_interfaces::msg::Log>("rosout", std::bind(&cs_listener::log_callback, this, _1));
+  this->rosout_subscription = this->create_subscription<rcl_interfaces::msg::Log>("rosout", 1000, std::bind(&cs_listener::log_callback, this, _1));
 }
 
 cs_listener::~cs_listener()
