@@ -161,7 +161,7 @@ void StateManager::check_message_ros(std::string robot_code, const rcl_interface
         this->api_instance.push_event_log(this->event_instance.get_log());
         
 
-        if((data->level == 8) || (data->msg == "Goal reached")){
+        if((data->level == data->ERROR) || (data->msg == "Goal reached")){
             // Clear everything, end of event
             this->clear();
         }
