@@ -1,11 +1,19 @@
-#include <ros/ros.h>
 #include <gtest/gtest.h>
 #include <fstream>
 #include <rosrect-listener-agent/backend_api.h>
 
+using namespace utility;                    // Common utilities like string conversions
+using namespace web;                        // Common features like URIs.
+using namespace web::http;                  // Common HTTP functionality
+using namespace web::http::client;          // HTTP client features
+using namespace concurrency::streams;       // Asynchronous streams
+using namespace ::pplx;                     // PPLX for tasks
+using namespace web::json;                  // JSON features
+
 // Log file settings
-std::string package_path = ros::package::getPath("rosrect-listener-agent");
-std::string log_name = package_path + "/test/logs/logData";
+std::string package_path = ament_index_cpp::get_package_prefix("rosrect-listener-agent");
+int install_pos = package_path.find("install");
+std::string log_name = (package_path.replace(install_pos, 7, "src")) + "/test/logs/logData";
 std::string log_ext = ".json";
 int log_id = 0;
 
@@ -35,8 +43,8 @@ std::string time_str = "2020-04-14T06:38:06Z";
 std::string level = "Error";
 std::string cflag = "false";
 std::string module = "Null";
-std::string source = "/move_base";
-std::string message = "Aborting because a valid plan is not found";
+std::string source = "bt_navigator";
+std::string message = "Navigation failed";
 std::string description = "Null";
 std::string resolution = "Null"; 
 std::string event_id_str = "Sample id";

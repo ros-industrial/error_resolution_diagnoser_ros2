@@ -1,11 +1,15 @@
-#include <ros/ros.h>
 #include <gtest/gtest.h>
 #include <fstream>
+#include <boost/filesystem.hpp>
 #include <rosrect-listener-agent/state_manager.h>
 
+using namespace web::json;                  // JSON features
+using namespace web;                        // Common features like URIs.
+
 // Log file settings
-std::string package_path = ros::package::getPath("rosrect-listener-agent");
-std::string log_name = package_path + "/test/logs/logData";
+std::string package_path = ament_index_cpp::get_package_prefix("rosrect-listener-agent");
+int install_pos = package_path.find("install");
+std::string log_name = (package_path.replace(install_pos, 7, "src")) + "/test/logs/logData";
 std::string log_ext = ".json";
 int log_id = 0;
 
@@ -30,9 +34,9 @@ void logCleanup()
 StateManager state_manager_instance;
 
 // Sample message
-std::string errorMessage = "Aborting because a valid control could not be found. Even after executing all recovery behaviors";
-std::string warningMessage = "DWA Planner failed to produce path.";
-std::string infoMessage = "Got new plan";
+std::string errorMessage = "Navigation failed";
+std::string warningMessage = "Planning algorithm failed to generate a valid path";
+std::string infoMessage = "Received a goal, begin following path";
 std::string infoEndMessage = "Goal reached";
 
 // Sample log
@@ -169,11 +173,11 @@ TEST(StateManagerTestSuite, checkMessageROSErrorTest)
 {
   // Sample error message
   std::string sampleRobotCode = "SampleRobotCode";
-  rosgraph_msgs::Log data;
-  data.level = 8;
-  data.name = "/move_base";
+  rcl_interfaces::msg::Log data;
+  data.level = data.ERROR;
+  data.name = "bt_navigator";
   data.msg = errorMessage;
-  rosgraph_msgs::Log::ConstPtr rosmsg(new rosgraph_msgs::Log(data));
+  rcl_interfaces::msg::Log::SharedPtr rosmsg(new rcl_interfaces::msg::Log(data));
 
   // Call check_message_ros
   state_manager_instance.check_message_ros(sampleRobotCode, rosmsg);
@@ -181,10 +185,11 @@ TEST(StateManagerTestSuite, checkMessageROSErrorTest)
   // Check if log is created
   log_id++;
   std::string filename = log_name + std::to_string(log_id) + log_ext;
+  std::cout << "Checking: " << filename << std::endl;
   
   // Check if file exists
-  std::ifstream infile1(filename);
-  bool fileflag = infile1.good();  
+  boost::filesystem::path infile1(filename);
+  bool fileflag = boost::filesystem::exists(infile1);
   ASSERT_TRUE(fileflag);
 
   // Call check_message_ros again with the same message
@@ -193,10 +198,11 @@ TEST(StateManagerTestSuite, checkMessageROSErrorTest)
   // Check if log is created
   log_id++;
   filename = log_name + std::to_string(log_id) + log_ext;
-  
+  std::cout << "Checking: " << filename << std::endl;
+
   // Check if file exists
-  std::ifstream infile2(filename);
-  fileflag = infile2.good();  
+  boost::filesystem::path infile2(filename);
+  fileflag = boost::filesystem::exists(infile2);  
   ASSERT_TRUE(fileflag);
 
   // Clear state manager
@@ -207,11 +213,11 @@ TEST(StateManagerTestSuite, checkMessageROSWarningTest)
 {
   // Sample warning message
   std::string sampleRobotCode = "SampleRobotCode";
-  rosgraph_msgs::Log data;
-  data.level = 4;
-  data.name = "/move_base";
+  rcl_interfaces::msg::Log data;
+  data.level = data.WARN;
+  data.name = "bt_navigator";
   data.msg = warningMessage;
-  rosgraph_msgs::Log::ConstPtr rosmsg(new rosgraph_msgs::Log(data));
+  rcl_interfaces::msg::Log::SharedPtr rosmsg(new rcl_interfaces::msg::Log(data));
 
   // Call check_message_ros
   state_manager_instance.check_message_ros(sampleRobotCode, rosmsg);
@@ -221,8 +227,8 @@ TEST(StateManagerTestSuite, checkMessageROSWarningTest)
   std::string filename = log_name + std::to_string(log_id) + log_ext;
   
   // Check if file exists
-  std::ifstream infile1(filename);
-  bool fileflag = infile1.good();  
+  boost::filesystem::path infile1(filename);
+  bool fileflag = boost::filesystem::exists(infile1);  
   ASSERT_TRUE(fileflag);
   
   // Clear state manager
@@ -233,11 +239,11 @@ TEST(StateManagerTestSuite, checkMessageROSInfoTest)
 {
   // Sample warning message
   std::string sampleRobotCode = "SampleRobotCode";
-  rosgraph_msgs::Log data;
-  data.level = 2;
-  data.name = "/move_base";
+  rcl_interfaces::msg::Log data;
+  data.level = data.INFO;
+  data.name = "bt_navigator";
   data.msg = infoMessage;
-  rosgraph_msgs::Log::ConstPtr rosmsg1(new rosgraph_msgs::Log(data));
+  rcl_interfaces::msg::Log::SharedPtr rosmsg1(new rcl_interfaces::msg::Log(data));
 
   // Call check_message_ros
   state_manager_instance.check_message_ros(sampleRobotCode, rosmsg1);
@@ -247,13 +253,13 @@ TEST(StateManagerTestSuite, checkMessageROSInfoTest)
   std::string filename = log_name + std::to_string(log_id) + log_ext;
   
   // Check if file DOES NOT exist, since for info, the listener waits to push
-  std::ifstream infile1(filename);
-  bool fileflag = infile1.good();  
+  boost::filesystem::path infile1(filename);
+  bool fileflag = boost::filesystem::exists(infile1); 
   ASSERT_TRUE(fileflag);
 
   // Change message to an INFO end
   data.msg = infoEndMessage;
-  rosgraph_msgs::Log::ConstPtr rosmsg2(new rosgraph_msgs::Log(data));
+  rcl_interfaces::msg::Log::SharedPtr rosmsg2(new rcl_interfaces::msg::Log(data));
 
   // Call check_message_ros
   state_manager_instance.check_message_ros(sampleRobotCode, rosmsg2);
@@ -261,8 +267,8 @@ TEST(StateManagerTestSuite, checkMessageROSInfoTest)
   // Check if file exists, since for info end, the state manager pushes
   log_id++;
   filename = log_name + std::to_string(log_id) + log_ext;
-  std::ifstream infile2(filename);
-  fileflag = infile2.good();  
+  boost::filesystem::path infile2(filename);
+  fileflag = boost::filesystem::exists(infile2);  
   ASSERT_TRUE(fileflag);
 
   // Clear state manager
