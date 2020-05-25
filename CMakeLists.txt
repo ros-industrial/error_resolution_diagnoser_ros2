@@ -75,10 +75,12 @@ if(BUILD_TESTING)
   # ament_lint_auto_find_test_dependencies()
   # include_directories(test)
   find_package(ament_cmake_gtest REQUIRED)
+  find_package(launch_testing_ament_cmake)
   
   ament_add_gtest(backend_test_node test/utests_backendapi.cpp)
   ament_add_gtest(robotevent_test_node test/utests_robotevent.cpp)
   ament_add_gtest(statemanager_test_node test/utests_statemanager.cpp)
+  add_launch_test(test/listener_integration_launch_ros_test.py)
   
   ament_target_dependencies(backend_test_node rosrect-listener-agent-lib rclcpp rcl_interfaces ament_index_cpp)
   ament_target_dependencies(robotevent_test_node rosrect-listener-agent-lib rclcpp rcl_interfaces ament_index_cpp)
