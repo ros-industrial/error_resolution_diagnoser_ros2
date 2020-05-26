@@ -1,12 +1,5 @@
 .vscode/c_cpp_properties.json
 .vscode/settings.json
-test/logs/logData1.json
-test/logs/logData2.json
-test/logs/logData3.json
-test/logs/logData4.json
-test/logs/logData5.json
-test/logs/logData6.json
-test/logs/logData7.json
 test/logs/logData8.json
 test/logs/logData9.json
 test/logs/logData10.json

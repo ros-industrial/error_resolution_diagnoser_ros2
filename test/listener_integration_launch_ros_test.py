@@ -98,7 +98,7 @@ class ListenerTest(unittest.TestCase):
             pub.publish(msg)
 
             # Spin away
-            self.spin_rclpy(0.5)
+            self.spin_rclpy(0.25)
 
     """
     TEST CASES:
