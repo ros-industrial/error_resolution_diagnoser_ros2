@@ -81,11 +81,13 @@ Optionally, you can run the unit tests by following steps below.
 2. Run tests using `colcon test`. Your terminal will show test results similar to a snapshot below. Logs will be created in the `./test/logs` folder:
 
     ```
+
     $ colcon test --packages-select rosrect-listener-agent-ros2
     Starting >>> rosrect-listener-agent
     Finished <<< rosrect-listener-agent [25.3s]            
 
     Summary: 1 package finished [25.5s]
+
     ```
 
 3. See the test results using `colcon test-result` as follows. Use `--verbose` option to see the test failure results, and `-all` to see all results.
@@ -93,13 +95,16 @@ Optionally, you can run the unit tests by following steps below.
     The following shows that no tests failed:
 
     ```
+
     $ colcon test-result --verbose
     Summary: 24 tests, 0 errors, 0 failures, 0 skipped
+
     ```
 
     The following shows the results no matter whether it passed or failed. Open up the individual XML files for more information:
 
     ```
+
     $ colcon test-result --all
     build/rosrect-listener-agent/Testing/20200526-0218/Test.xml: 4 tests, 0 errors, 0 failures, 0 skipped
     build/rosrect-listener-agent/test_results/rosrect-listener-agent/backend_test_node.gtest.xml: 2 tests, 0 errors, 0 failures, 0 skipped
@@ -109,6 +114,7 @@ Optionally, you can run the unit tests by following steps below.
     build/rosrect-listener-agent/test_results/rosrect-listener-agent/test_listener_integration_launch_test.py.xunit.xml: 3 tests, 0 errors, 0 failures, 0 skipped
 
     Summary: 24 tests, 0 errors, 0 failures, 0 skipped
+    
     ```
 
 ## Syntax
