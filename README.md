@@ -31,27 +31,37 @@ You can get access to the agent by cloning this repo and building the ROS node. 
 1. Open a terminal window.
 
 2. Install Microsoft's [`C++ REST SDK`][6] for establishing the backend api for incident management using `apt-get`:
+
     ```
     $ sudo apt-get install libcpprest-dev
     ```
 
 2. Change to your `src` folder of the ROS 2 workspace directory. Generally it is as follows:
+
     ```
     $ cd ~/ros2_ws/src
     ```
+
 3. Clone the repo:
+
     ```git
     $ git clone https://github.com/cognicept-admin/rosrect-listener-agent-ros2
     ```
+
 4. Change to your `ros2_ws` folder:
-   ```
+
+    ```
     $ cd ..
     ``` 
+
 5. Issue `colcon build` to build the ROS node:
+
     ```
     $ colcon build --symlink-install
     ```
+
 6. Check if node has built correctly and registered using `ros2 pkg`:
+
     ```
     $ ros2 pkg list | grep rosrect
       rosrect-listener-agent-ros2
