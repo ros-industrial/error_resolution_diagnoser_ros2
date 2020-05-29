@@ -116,12 +116,12 @@ TEST(BackEndApiTestSuite, jsonTest)
   ASSERT_TRUE(fieldFlag);
 }
 
-/* Error classification features in development below
+/* Error classification features in development below */
 
 TEST(BackEndApiTestSuite, ecsHitTest)
 {
   // Sample message
-  std::string msgText = "Rotate recovery can't rotate in place because there is a potential collision. Cost: -1.00";
+  std::string msgText = "Navigation failed";
   
   // Check with ecs
   json::value msgInfo;
@@ -169,7 +169,7 @@ TEST(BackEndApiTestSuite, ecsMissTest)
   bool nullFlag = msgInfo.is_null();  
   ASSERT_TRUE(nullFlag);
 }
-*/
+
 
 int main(int argc, char **argv)
 {

@@ -1,0 +1,1 @@
+{"agent_id":"R2D2","compounding":"false","create_ticket":false,"description":"Null","event_id":"a68c5bd5-ae81-4ccf-8c2d-5362ec8db65b","level":"Info","message":"Goal was canceled. Stopping the robot.","module":"Controller","property_id":"MFALCON","resolution":"Null","robot_id":"DROID","source":"dwb_controller","timestamp":"2020-05-29T15:41:32.331293"}

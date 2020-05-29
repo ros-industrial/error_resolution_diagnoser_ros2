@@ -15,7 +15,7 @@ import rcl_interfaces.msg
 
 
 LOGID = 0
-os.environ['AGENT_TYPE'] = 'ROS'
+os.environ['AGENT_TYPE'] = 'DB'
 
 def generate_test_description(ready_fn):
     # Necessary to get real-time stdout from python processes but we are not using it:
@@ -103,12 +103,14 @@ class ListenerTest(unittest.TestCase):
 
     """
     TEST CASES:
-    CASE 1: Error Suppression
-    CASE 2: Info Suppression
-    CASE 3: Warn Suppression
+    CASE 1: Compounding Error
+    CASE 2: Error Suppression
+    CASE 3: Info Suppression
+    CASE 4: Non Compounding Error
+    CASE 5: Warn Suppression
     """
 
-    def test_error_suppression_log(self, listener):
+    def test_compounding_error_log(self, listener):
 
         # Create publisher
         pub = self.node.create_publisher(
@@ -126,10 +128,88 @@ class ListenerTest(unittest.TestCase):
         
         # Test message list
         msg_list = [
+            "Setting pose (375.252000): -1.564 1.400 0.786",
+            "Navigation failed"
+            ]
+
+        # Test severity level that should match with message list
+        sev_list = ["I", "E"]
+
+        # Send messages
+        self.talk(msg_list, sev_list, pub, msg, listener)
+
+        # Check if logs are correctly created
+
+        global LOGID
+
+        # Set up test variables
+        expected_logs = 2        
+        log_idx = 0
+        message = []
+        event_id = []
+        create_ticket = []
+        
+        # Loop through logs
+        while(log_idx < expected_logs):
+            # Check if logs are created
+            log_idx += 1
+            LOGID += 1
+            filename = self.logname + str(LOGID) + self.logext
+            print(filename)
+            file_flag = os.path.isfile(filename)
+            
+            if file_flag is False:
+                LOGID = 2
+                break
+
+            # Retrieve values
+            with open(filename) as json_file:
+                data = json.load(json_file)
+                message.append(data['message'])
+                event_id.append(data['event_id'])
+                create_ticket.append(data['create_ticket'])
+
+        # Check if expected log files are created
+        self.assertTrue(file_flag)
+
+        # Check if messages are expected
+        expected_msg_list = [
+            "Setting pose (375.252000): -1.564 1.400 0.786",
+            "Navigation failed"]
+
+        self.assertEqual(expected_msg_list, message)
+
+        # Check if create_ticket is correct
+        expected_create_ticket = [False, True]
+        self.assertEqual(expected_create_ticket, create_ticket)
+
+        # Check if event_ids are unique
+        expected_events = 2
+        unique_event_flag = (expected_events == len(set(event_id)))
+        self.assertTrue(unique_event_flag)
+
+    def test_error_suppression_log(self, listener):
+
+        # Create publisher
+        pub = self.node.create_publisher(
+            rcl_interfaces.msg.Log,
+            'rosout',
+            10
+        )
+        self.addCleanup(self.node.destroy_publisher, pub)
+
+        # Create and publish a sample message to establish pumbling for the first time
+        msg = rcl_interfaces.msg.Log()
+        # msg.msg = "Sample message to establish plumbing?"
+        # msg.level = 40
+        # pub.publish(msg)
+        
+        # Test message list
+        msg_list = [
             "Begin navigating from current location to (-1.65, 1.28)",
             "Planning algorithm failed to generate a valid path to (-2.02, -1.21)",
             "Attempting Spin",
-            "Turning -1.57 for spin recovery",
+            "Turning -1.57 for spin recovery.",
             "Spin running...",
             "Spin running...",
             "Spin running...",
@@ -140,7 +220,7 @@ class ListenerTest(unittest.TestCase):
             "Begin navigating from current location to (-1.65, 1.28)",
             "Planning algorithm failed to generate a valid path to (-2.02, -1.21)",
             "Attempting Spin",
-            "Turning -1.57 for spin recovery",
+            "Turning -1.57 for spin recovery.",
             "Spin running...",
             "Spin running...",
             "Spin completed successfully",
@@ -195,7 +275,7 @@ class ListenerTest(unittest.TestCase):
             "Begin navigating from current location to (-1.65, 1.28)",
             "Planning algorithm failed to generate a valid path to (-2.02, -1.21)",
             "Attempting Spin",
-            "Turning -1.57 for spin recovery",
+            "Turning -1.57 for spin recovery.",
             "Spin running...",
             "Spin completed successfully",
             "Navigation failed",
@@ -203,7 +283,7 @@ class ListenerTest(unittest.TestCase):
             "Begin navigating from current location to (-1.65, 1.28)",
             "Planning algorithm failed to generate a valid path to (-2.02, -1.21)",
             "Attempting Spin",
-            "Turning -1.57 for spin recovery",
+            "Turning -1.57 for spin recovery.",
             "Spin running...",
             "Spin completed successfully",
             "Navigation failed",
@@ -217,7 +297,7 @@ class ListenerTest(unittest.TestCase):
         self.assertEqual(expected_create_ticket, create_ticket)
 
         # Check if event_ids are unique
-        expected_events = 3
+        expected_events = 4
         unique_event_flag = (expected_events == len(set(event_id)))
         self.assertTrue(unique_event_flag)
 
@@ -305,6 +385,76 @@ class ListenerTest(unittest.TestCase):
         self.assertEqual(expected_create_ticket, create_ticket)
 
         # Check if event_ids are unique
+        expected_events = 2
+        unique_event_flag = (expected_events == len(set(event_id)))
+        self.assertTrue(unique_event_flag)
+
+    def test_non_compounding_error_log(self, listener):
+        
+        # Create publisher                
+        pub = self.node.create_publisher(
+            rcl_interfaces.msg.Log,
+            'rosout',
+            10
+        )
+        self.addCleanup(self.node.destroy_publisher, pub)
+        
+        # Create message
+        msg = rcl_interfaces.msg.Log()
+        
+        # Test message list
+        msg_list = ["Navigation failed"]
+
+        # Test severity level that should match with message list
+        sev_list = ["E"]
+
+        # Send messages
+        self.talk(msg_list, sev_list, pub, msg, listener)
+
+        # Check if logs are correctly created
+
+        global LOGID
+
+        # Set up test variables
+        expected_logs = 1        
+        log_idx = 0
+        message = []
+        event_id = []
+        create_ticket = []
+        
+        # Loop through logs
+        while(log_idx < expected_logs):
+            # Check if logs are created
+            log_idx += 1
+            LOGID += 1
+            filename = self.logname + str(LOGID) + self.logext
+            file_flag = os.path.isfile(filename)
+            
+            if file_flag is False:
+                LOGID = 13
+                break
+
+            # Retrieve values
+            with open(filename) as json_file:
+                data = json.load(json_file)
+                message.append(data['message'])
+                event_id.append(data['event_id'])
+                create_ticket.append(data['create_ticket'])
+
+        # Check if expected log files are created
+        self.assertTrue(file_flag)
+
+        # Check if messages are expected
+        expected_msg_list = [
+            "Navigation failed"]
+        
+        self.assertEqual(expected_msg_list, message)
+
+        # Check if create_ticket is correct
+        expected_create_ticket = [True]
+        self.assertEqual(expected_create_ticket, create_ticket)
+
+        # Check if event_ids are unique
         expected_events = 1
         unique_event_flag = (expected_events == len(set(event_id)))
         self.assertTrue(unique_event_flag)
@@ -327,7 +477,7 @@ class ListenerTest(unittest.TestCase):
             "Begin navigating from current location to (-1.65, 1.28)",
             "Planning algorithm failed to generate a valid path to (-2.02, -1.21)",
             "Attempting Spin",
-            "Turning -1.57 for spin recovery",
+            "Turning -1.57 for spin recovery.",
             "Spin running...",
             "Spin completed successfully",
             "Planning algorithm failed to generate a valid path to (-2.02, -1.21)",
@@ -381,7 +531,7 @@ class ListenerTest(unittest.TestCase):
             "Begin navigating from current location to (-1.65, 1.28)",
             "Planning algorithm failed to generate a valid path to (-2.02, -1.21)",
             "Attempting Spin",
-            "Turning -1.57 for spin recovery",
+            "Turning -1.57 for spin recovery.",
             "Spin running...",
             "Spin completed successfully",
             "Navigation failed"]

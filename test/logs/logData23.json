@@ -1,0 +1,1 @@
+{"agent_id":"R2D2","compounding":"true","create_ticket":false,"description":"Null","event_id":"efe62109-0797-4d18-9791-f96613ea4209","level":"Info","message":"Preempting the goal. Passing the new path to the planner.","module":"Controller","property_id":"MFALCON","resolution":"Null","robot_id":"DROID","source":"dwb_controller","timestamp":"2020-05-29T15:41:33.617427"}
