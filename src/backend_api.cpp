@@ -30,11 +30,11 @@ BackendApi::BackendApi() {
     std::cout << "TEST mode is ON. JSON Logs will be saved here: " << package_path + "/test/logs/" << std::endl;
   }
 
-  /* Error classification features in development below
+  /* Error classification features in development below */
   // Error classification API variables
-  this->error_api_host = std::getenv("ECS_API");
-  this->error_api_endpoint = "/api/getErrorData/";
-  */
+  this->ecs_api_host = std::getenv("ECS_API");
+  this->ecs_api_endpoint = "/api/getErrorData/";
+  this->ecs_robot_model = std::getenv("ECS_ROBOT_MODEL");
 }
 
 BackendApi::~BackendApi() {
@@ -175,7 +175,7 @@ json::value BackendApi::create_event_log(std::vector<std::vector<std::string>> l
 
 }
 
-/* Error Classification Features in development below
+/* Error Classification Features in development below */
 
 pplx::task<void> BackendApi::query_error_classification(std::string msg_text){  
   
@@ -186,14 +186,15 @@ pplx::task<void> BackendApi::query_error_classification(std::string msg_text){
     config.set_validate_certificates(false);
     
     // Create HTTP client
-    http_client client(this->error_api_host, config);
+    http_client client(this->ecs_api_host, config);
 
     // Build request
     http_request req(methods::GET);
 
     // Build request URI.
-    uri_builder builder(this->error_api_endpoint);
-    builder.append_path(msg_text, true);
+    uri_builder builder(this->ecs_api_endpoint);
+    builder.append_query("RobotModel", this->ecs_robot_model);
+    builder.append_query("ErrorText", msg_text);
     req.set_request_uri(builder.to_string());
         
     return client.request(req);
@@ -245,4 +246,3 @@ json::value BackendApi::check_error_classification(std::string msg_text){
 
 }
 
-*/

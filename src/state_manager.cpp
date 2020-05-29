@@ -34,9 +34,9 @@ void StateManager::check_message(std::string agent_type, std::string robot_code,
 
     if(agent_type == "DB"){
         // std::cout << "Checking with DB..." << std::endl;
-        /* Error classification features in development below
+        /* Error classification features in development below */
         this->check_message_db(robot_code, data);
-        */
+
     }
     else{
         // std::cout << "Checking with ROS..." << std::endl;
@@ -45,20 +45,19 @@ void StateManager::check_message(std::string agent_type, std::string robot_code,
 
 }
 
-/* Error classification features in development below
-void StateManager::check_message_db(std::string robot_code, const rosgraph_msgs::Log::ConstPtr& data){
+/* Error classification features in development below */
+void StateManager::check_message_db(std::string robot_code, const rcl_interfaces::msg::Log::SharedPtr data){
 
     // Parse message to query-able format
     std::string msg_text = data->msg;
-    std::replace(msg_text.begin(), msg_text.end(), '/', ' ');
+    // std::replace(msg_text.begin(), msg_text.end(), '/', ' ');
     // std::cout << "Querying: " << msg_text << std::endl;
 
     // Check error classification, ECS
     json::value msg_info = this->api_instance.check_error_classification(msg_text);
     
     bool ecs_hit = !(msg_info.is_null());
-    // std::cout << "ECS Hit: ";
-    // std::cout << ecs_hit << std::endl;
+    // std::cout << "ECS Hit: " << ecs_hit << std::endl;
 
     if(ecs_hit){
         // ECS has a hit, follow the message cycle
@@ -96,15 +95,16 @@ void StateManager::check_message_db(std::string robot_code, const rosgraph_msgs:
             // If not suppressed, send it to event to update
             this->event_instance.update_log(data, msg_info);
 
+            // Push to stream
+            this->api_instance.push_event_log(this->event_instance.get_log());
+
             // Get compounding flag
             bool cflag = (msg_info.at(U("compounding_flag"))).as_bool();
             
             if(cflag == true){
                 // Nothing to do here unless it is a compounding error
-                if((data->level == 8) || (data->msg == "Goal reached")){
+                if(error_level == "Error"){
                     // Push on ALL errors / One named Info msg
-                    // Push to stream
-                    this->api_instance.push_event_log(this->event_instance.get_log());
                     // Clear only event log since this is compounding
                     this->event_instance.clear_log();
                 }
@@ -113,10 +113,7 @@ void StateManager::check_message_db(std::string robot_code, const rosgraph_msgs:
                 }
             }   
             else{
-                // This is a compounding log, need to push
-                // Push to stream
-                this->api_instance.push_event_log(this->event_instance.get_log());
-                // Clear everything
+                // This is a compounding log, Clear everything
                 this->clear();
             }
 
@@ -127,7 +124,6 @@ void StateManager::check_message_db(std::string robot_code, const rosgraph_msgs:
         // ECS does not have a hit, normal operation resumes
     }
 }
-*/
 
 void StateManager::check_message_ros(std::string robot_code, const rcl_interfaces::msg::Log::SharedPtr data){
 
@@ -161,7 +157,7 @@ void StateManager::check_message_ros(std::string robot_code, const rcl_interface
         this->api_instance.push_event_log(this->event_instance.get_log());
         
 
-        if((data->level == data->ERROR) || (data->msg == "Goal reached")){
+        if((data->level == data->ERROR) || (data->msg == "Navigation succeeded")){
             // Clear everything, end of event
             this->clear();
         }
