@@ -9,6 +9,10 @@ pipeline{
     stage('--build--'){
       steps{
         echo 'building tests'
+        sh '''
+           ls
+           sh cognicept-runtest.sh
+           '''
       }
     }
     stage ("--Extract test results--") {
