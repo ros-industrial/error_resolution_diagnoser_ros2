@@ -8,16 +8,13 @@ pipeline{
     }
     stage('--build--'){
       steps{
-            sh '''
-            ls
-            sh test.sh
-            '''
+        echo 'building tests'
 
       }
     }
     stage ("--Extract test results--") {
     steps {
-    cobertura coberturaReportFile: 'myxmlfile.xml'
+      echo 'extracting test results'
     }
     }
   }
