@@ -9,12 +9,11 @@ pipeline{
     stage('--build--'){
       steps{
         echo 'building tests'
-
       }
     }
     stage ("--Extract test results--") {
     steps {
-      echo 'extracting test results'
+      echo 'extracting test results - 2'
     }
     }
   }
