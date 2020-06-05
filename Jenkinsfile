@@ -1,5 +1,5 @@
 pipeline{
-  agent { label 'ubuntu' }
+  agent { label 'ros2' }
   stages{
     stage('--test--'){
       steps{
