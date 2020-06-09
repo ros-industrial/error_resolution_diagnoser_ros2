@@ -1,4 +1,4 @@
-#include <rosrect-listener-agent/backend_api.h>
+#include <rosrect-listener-agent-ros2/backend_api.h>
 
 using namespace utility;                    // Common utilities like string conversions
 using namespace web;                        // Common features like URIs.
@@ -19,7 +19,7 @@ BackendApi::BackendApi() {
   this->agent_mode = std::getenv("AGENT_MODE");
 
   // File variables
-  std::string package_path = ament_index_cpp::get_package_prefix("rosrect-listener-agent");
+  std::string package_path = ament_index_cpp::get_package_prefix("rosrect-listener-agent-ros2");
   int install_pos = package_path.find("install");
   package_path.replace(install_pos, 7, "src");
   this->log_name = package_path + "/test/logs/logData";

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <fstream>
-#include <rosrect-listener-agent/backend_api.h>
+#include <rosrect-listener-agent-ros2/backend_api.h>
 
 using namespace utility;                    // Common utilities like string conversions
 using namespace web;                        // Common features like URIs.
@@ -11,7 +11,7 @@ using namespace ::pplx;                     // PPLX for tasks
 using namespace web::json;                  // JSON features
 
 // Log file settings
-std::string package_path = ament_index_cpp::get_package_prefix("rosrect-listener-agent");
+std::string package_path = ament_index_cpp::get_package_prefix("rosrect-listener-agent-ros2");
 int install_pos = package_path.find("install");
 std::string log_name = (package_path.replace(install_pos, 7, "src")) + "/test/logs/logData";
 std::string log_ext = ".json";

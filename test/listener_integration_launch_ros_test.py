@@ -13,6 +13,7 @@ import rclpy.context
 import rclpy.executors
 import rcl_interfaces.msg
 
+from ament_index_python.packages import get_package_prefix
 
 LOGID = 0
 
@@ -22,8 +23,9 @@ def generate_test_description(ready_fn):
     proc_env['PYTHONUNBUFFERED'] = '1'
 
     listener_node = launch_ros.actions.Node(
-        package='rosrect-listener-agent',
-        node_executable='rosrect-listener-agent',
+        package='rosrect-listener-agent-ros2',
+        node_executable='rosrect-listener-agent-ros2',
+        arguments=['__log_disable_rosout:=true'],
         env=proc_env,
     )
 
@@ -52,8 +54,11 @@ class ListenerTest(unittest.TestCase):
         
         # Log file info
         parentdir = os.path.expanduser("~")
+        packagedir = get_package_prefix('rosrect-listener-agent-ros2')
+        packagedir = packagedir.replace('install', 'src')
         # if (parentdir != "/root"): 
-        cls.logfolder = os.path.join(parentdir,"ros2_dd_ws", "src", "rosrect-listener-agent", "test", "logs")
+        cls.logfolder = os.path.join(packagedir, "test", "logs")
+        print("Test log folder: ", cls.logfolder)
         # else:
             # self.logfolder = "/app/logs"
         
@@ -72,6 +77,7 @@ class ListenerTest(unittest.TestCase):
 
     # Method to publish messages
     def talk(self, msg_list, sev_list, pub, msg, listener):
+        print('Talking...')
 
         # Loop through message list    
         for idx in range(len(msg_list)):
@@ -85,6 +91,7 @@ class ListenerTest(unittest.TestCase):
 
             # Set message content
             msg.msg = msg_list[idx]
+            print(msg_list[idx])
 
             # Set message severity            
             if sev_list[idx] == "E":

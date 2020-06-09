@@ -1,8 +1,8 @@
-#include <rosrect-listener-agent/listener_agent.h>
+#include <rosrect-listener-agent-ros2/listener_agent.h>
 using std::placeholders::_1;
 
 cs_listener::cs_listener() 
-: Node("rosrect_listener_agent_node")
+: Node("rosrect_listener_agent_ros2_node")
 {
   // Constructor
 
@@ -32,6 +32,7 @@ cs_listener::~cs_listener()
 
 void cs_listener::log_callback(const rcl_interfaces::msg::Log::SharedPtr rosmsg)
 {
+
   if (rosmsg->name != "rviz2")
   {
     std::cout << "Message received: " << rosmsg->msg << std::endl;
@@ -45,7 +46,7 @@ int main(int argc, char **argv)
 
   // Initialize node
   rclcpp::init(argc, argv);
-  
+
   // Spin node
   rclcpp::spin(std::make_shared<cs_listener>());
 
