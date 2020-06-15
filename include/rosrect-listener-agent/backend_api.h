@@ -11,6 +11,10 @@
 #include <cpprest/containerstream.h>
 #include <cpprest/producerconsumerstream.h>
 #include <ament_index_cpp/get_package_prefix.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/uuid/uuid.hpp>            // uuid class
+#include <boost/uuid/uuid_generators.hpp> // generators
+#include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
 
 class BackendApi {
   // This class provides access to Error Classification API and event log creation through C++.
@@ -19,6 +23,7 @@ class BackendApi {
   std::string site_id;
   std::string agent_id;
   std::string agent_mode;
+  std::string log_dir;
   std::string log_name;
   std::string log_ext;
   int log_id;
@@ -36,5 +41,4 @@ class BackendApi {
   /* Error classification features in development below */
   pplx::task<void> query_error_classification(std::string); // Query error classification database table
   web::json::value check_error_classification(std::string); // Entry point for error classification
-
 };

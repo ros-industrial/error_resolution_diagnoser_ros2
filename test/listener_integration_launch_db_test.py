@@ -53,8 +53,12 @@ class ListenerTest(unittest.TestCase):
         
         # Log file info
         parentdir = os.path.expanduser("~")
-        # if (parentdir != "/root"): 
-        cls.logfolder = os.path.join(parentdir,"ros2_dd_ws", "src", "rosrect-listener-agent", "test", "logs")
+        parentdir = parentdir + "/.cognicept/agent/logs/latest_ros2_log.txt"
+        f = open(parentdir)
+        latest_log_loc = f.readline()
+        latest_log_loc = latest_log_loc[:-1]
+        f.close()
+        cls.logfolder = latest_log_loc
         # else:
             # self.logfolder = "/app/logs"
         

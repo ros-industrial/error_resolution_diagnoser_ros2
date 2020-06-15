@@ -10,7 +10,7 @@ RobotEvent event_instance;
 
 // Create sample log  
 std::vector<std::vector<std::string>> sample_log;
-std::string level = "Error";
+int level = 40;
 std::string cflag = "Null";
 std::string module = "Null";
 std::string source = "bt_navigator";
@@ -21,6 +21,7 @@ std::string resolution = "Null";
 // Hold the record
 std::vector<std::string> event_details;
 
+// Test cases
 TEST(RobotEventTestSuite, getLogTest)
 {
   // Sample message
@@ -78,7 +79,7 @@ TEST(RobotEventTestSuite, updateLogROSTest)
   // Expected log
   // For ROS, cflag is Null
   cflag = "Null";
-  event_details.push_back(level);
+  event_details.push_back(std::to_string(level));
   event_details.push_back(cflag);
   event_details.push_back(module);
   event_details.push_back(source);

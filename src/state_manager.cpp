@@ -64,17 +64,17 @@ void StateManager::check_message_db(std::string robot_code, const rcl_interfaces
         // std::cout << "JSON parsed";
         // msg_info = msg_info[0];
 
-        std::string error_level = (msg_info.at(U("error_level"))).as_string();
+        int error_level = (msg_info.at(U("error_level"))).as_integer();
         // std::cout << "Level: " << error_level << std::endl;
         std::string error_msg = (msg_info.at(U("error_text"))).as_string();
         // std::cout << "Text: " << error_msg << std::endl;
 
-        if(error_level == "Error"){
+        if(error_level == 8){
             // std::cout << "Error... " << data->msg << std::endl;
             // Check for suppression
             this->check_error(robot_code, error_msg);
         }
-        else if(error_level == "Warning"){
+        else if(error_level == 4){
             // std::cout << "Warning... " << data->msg << std::endl;
             // Check for suppression
             this->check_warning(robot_code, error_msg);
@@ -103,7 +103,7 @@ void StateManager::check_message_db(std::string robot_code, const rcl_interfaces
             
             if(cflag == true){
                 // Nothing to do here unless it is a compounding error
-                if(error_level == "Error"){
+                if(error_level == 8){
                     // Push on ALL errors / One named Info msg
                     // Clear only event log since this is compounding
                     this->event_instance.clear_log();

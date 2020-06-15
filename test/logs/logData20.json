@@ -1,1 +1,0 @@
-{"agent_id":"R2D2","compounding":"false","create_ticket":false,"description":"Null","event_id":"dea1b1bb-fa9d-47f0-b4ab-b5ba5b471527","level":"Info","message":"Setting pose (375.252000): -1.564 1.400 0.786","module":"Localization","property_id":"MFALCON","resolution":"Null","robot_id":"DROID","source":"amcl","timestamp":"2020-05-29T15:41:32.849518"}

@@ -10,32 +10,13 @@ using namespace concurrency::streams;       // Asynchronous streams
 using namespace ::pplx;                     // PPLX for tasks
 using namespace web::json;                  // JSON features
 
-// Log file settings
-std::string package_path = ament_index_cpp::get_package_prefix("rosrect-listener-agent");
-int install_pos = package_path.find("install");
-std::string log_name = (package_path.replace(install_pos, 7, "src")) + "/test/logs/logData";
-std::string log_ext = ".json";
-int log_id = 0;
-
-// Utility function to clean up log files
-void logCleanup()
-{
-  bool fileRemoveError = false;
-
-  while (!fileRemoveError)
-  {
-    // Get filename
-    log_id++;
-    std::string filename = log_name + std::to_string(log_id) + log_ext;
-    // std::cout << "Trying to remove file: " << filename << std::endl;
-    // Remove file
-    fileRemoveError = remove(filename.c_str());
-  }
-  log_id = 0;
-}
-
 // Create test object
 BackendApi api_instance;
+
+// Log file settings
+std::string log_name;
+std::string log_ext = ".json";
+int log_id = 0;
 
 // Create sample log  
 std::vector<std::vector<std::string>> sample_log;
@@ -52,6 +33,45 @@ std::string event_id_str = "Sample id";
 // Hold the record
 std::vector<std::string> event_details;
 
+// Utility functions
+void logCleanup()
+{
+  bool fileRemoveError = false;
+
+  while (!fileRemoveError)
+  {
+    // Get filename
+    log_id++;
+    std::string filename = log_name + std::to_string(log_id) + log_ext;
+    // std::cout << "Trying to remove file: " << filename << std::endl;
+    // Remove file
+    fileRemoveError = remove(filename.c_str());
+  }
+  log_id = 0;
+}
+
+void setLogFolder()
+{
+  // Set log folder
+  std::ifstream inFile;
+  std::string latest_log = std::getenv("HOME");
+  latest_log.append("/.cognicept/agent/logs/latest_ros2_log.txt");  
+  inFile.open(latest_log);
+  if (!inFile) 
+  {
+    std::cout << "Unable to open log file";
+    exit(1); // terminate with error
+  }
+  else
+  {
+    inFile >> log_name;
+    std::cout << "Reading logs from: " << log_name << std::endl;
+  }
+  inFile.close();
+  log_name.append("/logData");
+}
+
+// Test cases
 TEST(BackEndApiTestSuite, pushTest)
 {
   // Push to details
@@ -74,7 +94,7 @@ TEST(BackEndApiTestSuite, pushTest)
   // Get log file
   int log_id = 1;
   std::string filename = log_name + std::to_string(log_id) + log_ext;
-
+  std::cout << "Checking: " << filename << std::endl;
   // Check if file exists
   std::ifstream infile(filename);
   bool fileflag = infile.good();  
@@ -145,6 +165,9 @@ TEST(BackEndApiTestSuite, ecsHitTest)
     if(fieldNames[idx] == "compounding_flag"){
       fieldFlag = msgInfo.has_boolean_field(fieldNames[idx]);
     }
+    else if(fieldNames[idx] == "error_level"){
+      fieldFlag = msgInfo.has_integer_field(fieldNames[idx]);
+    }
     else{
       fieldFlag = msgInfo.has_string_field(fieldNames[idx]);
     }
@@ -173,8 +196,8 @@ TEST(BackEndApiTestSuite, ecsMissTest)
 
 int main(int argc, char **argv)
 {
-  // Cleanup
-  logCleanup();
+  // Set log folder
+  setLogFolder();
 
   // Start tests
   testing::InitGoogleTest(&argc, argv);

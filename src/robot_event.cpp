@@ -21,7 +21,7 @@ void RobotEvent::update_log(const rcl_interfaces::msg::Log::SharedPtr data, json
     // 'QID', 'Date/Time', 'Level', 'Compounding',
     // 'Module', 'Source', 'Message', 'Description',
     // 'Resolution', 'RobotEvent_ID'
-    std::string level = "Error";
+    int level = 8;
     std::string cflag = "Null";
     std::string module = "Null";
     std::string source = "Null";
@@ -38,21 +38,13 @@ void RobotEvent::update_log(const rcl_interfaces::msg::Log::SharedPtr data, json
         source = data->name;
 
         // Assign level
-        if(data->level == data->ERROR){
-            level = "Error";
-        }
-        else if(data->level == data->WARN){
-            level = "Warning";
-        }
-        else{
-            level = "Info";
-        }
+        level = data->level;
     }
     else{
         // std::cout << "Populating from DB!" << std::endl;
         // This is the DB case
         // Get all the data from the JSON object
-        level = (msg_info.at(U("error_level"))).as_string();
+        level = (msg_info.at(U("error_level"))).as_integer();
         bool cflag_bool = (msg_info.at(U("compounding_flag"))).as_bool();
         if (cflag_bool){
             cflag = "true";
@@ -73,7 +65,7 @@ void RobotEvent::update_log(const rcl_interfaces::msg::Log::SharedPtr data, json
     // Construct record
     std::vector<std::string> event_details;
     event_details.push_back(time_str);
-    event_details.push_back(level);
+    event_details.push_back(std::to_string(level));
     event_details.push_back(cflag);
     event_details.push_back(module);
     event_details.push_back(source);

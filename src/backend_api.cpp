@@ -19,21 +19,53 @@ BackendApi::BackendApi() {
   this->agent_mode = std::getenv("AGENT_MODE");
 
   // File variables
-  std::string package_path = ament_index_cpp::get_package_prefix("rosrect-listener-agent");
-  int install_pos = package_path.find("install");
-  package_path.replace(install_pos, 7, "src");
-  this->log_name = package_path + "/test/logs/logData";
+  this->log_dir = std::getenv("HOME");
+  // Generate UUID
+  boost::uuids::uuid uuid = boost::uuids::random_generator()();
+  // Stream
+  std::stringstream uuid_str;
+  uuid_str << uuid;
+  // Assign
+  std::string run_id = uuid_str.str();
+  // Clear stream
+  uuid_str.clear();
+  
+  this->log_dir.append("/.cognicept/agent/logs/");
+  std::string latest_log = this->log_dir + "latest_ros2_log.txt";
+  this->log_dir.append(run_id);
+
+  boost::filesystem::path dir2(this->log_dir);
+  if (boost::filesystem::exists(dir2))
+  {
+    std::cout<< "Agent log directory already exists: "<< this->log_dir <<std::endl;
+  }
+  else
+  {
+    if(boost::filesystem::create_directories(dir2))
+    {
+      std::cout<< "Agent log directory created: "<< this->log_dir <<std::endl;
+    }
+  }
+
+  // Write to file
+  std::ofstream outfile;
+  outfile.open(latest_log);
+  outfile << std::setw(4) << this->log_dir << std::endl;
+  outfile.close();
+  std::cout << "Updated latest log location in: " << latest_log << std::endl;
+  
+  this->log_name = this->log_dir + "/logData";
   this->log_ext = ".json";
   this->log_id = 0;
 
   if(this->agent_mode == "TEST"){
-    std::cout << "TEST mode is ON. JSON Logs will be saved here: " << package_path + "/test/logs/" << std::endl;
+    std::cout << "TEST mode is ON. JSON Logs will be saved here: " << this->log_dir << std::endl;
   }
 
   /* Error classification features in development below */
   // Error classification API variables
   this->ecs_api_host = std::getenv("ECS_API");
-  this->ecs_api_endpoint = "/api/getErrorData/";
+  this->ecs_api_endpoint = "/api/ert/getErrorData/";
   this->ecs_robot_model = std::getenv("ECS_ROBOT_MODEL");
 }
 
@@ -59,7 +91,7 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log){
   std::string event_id = last_log[idx++];
   
   bool ticketBool = false;
-  if((level == "Error") && ((cflag == "false") || (cflag == "Null"))){
+  if(((level == "8") || (level == "40")) && ((cflag == "false") || (cflag == "Null"))){
     ticketBool = true;
   }
   else

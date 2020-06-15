@@ -6,14 +6,24 @@
 using namespace web::json;                  // JSON features
 using namespace web;                        // Common features like URIs.
 
+// Create test object
+StateManager state_manager_instance;
+
 // Log file settings
-std::string package_path = ament_index_cpp::get_package_prefix("rosrect-listener-agent");
-int install_pos = package_path.find("install");
-std::string log_name = (package_path.replace(install_pos, 7, "src")) + "/test/logs/logData";
+std::string log_name;
 std::string log_ext = ".json";
 int log_id = 0;
 
-// Utility function to clean up log files
+// Sample message
+std::string errorMessage = "Navigation failed";
+std::string warningMessage = "Planning algorithm failed to generate a valid path";
+std::string infoMessage = "Received a goal, begin following path";
+std::string infoEndMessage = "Goal reached";
+
+// Sample log
+std::vector<std::string> found;
+
+// Utility functions
 void logCleanup()
 {
   bool fileRemoveError = false;
@@ -30,18 +40,28 @@ void logCleanup()
   log_id = 0;
 }
 
-// Create test object
-StateManager state_manager_instance;
+void setLogFolder()
+{
+  // Set log folder
+  std::ifstream inFile;
+  std::string latest_log = std::getenv("HOME");
+  latest_log.append("/.cognicept/agent/logs/latest_ros2_log.txt");  
+  inFile.open(latest_log);
+  if (!inFile) 
+  {
+    std::cout << "Unable to open log file";
+    exit(1); // terminate with error
+  }
+  else
+  {
+    inFile >> log_name;
+    std::cout << "Reading logs from: " << log_name << std::endl;
+  }
+  inFile.close();
+  log_name.append("/logData");
+}
 
-// Sample message
-std::string errorMessage = "Navigation failed";
-std::string warningMessage = "Planning algorithm failed to generate a valid path";
-std::string infoMessage = "Received a goal, begin following path";
-std::string infoEndMessage = "Goal reached";
-
-// Sample log
-std::vector<std::string> found;
-
+// Test cases
 TEST(StateManagerTestSuite, existTest)
 {
   // Sample message
@@ -341,8 +361,8 @@ TEST(StateManagerTestSuite, clearTest)
 
 int main(int argc, char **argv)
 {
-  // Cleanup
-  logCleanup();
+  // Set log folder
+  setLogFolder();
 
   // Start tests
   testing::InitGoogleTest(&argc, argv);

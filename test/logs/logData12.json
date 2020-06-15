@@ -1,1 +1,0 @@
-{"agent_id":"R2D2","compounding":"true","create_ticket":false,"description":"Null","event_id":"e7a8a575-99e4-4648-b5f2-9d65f0509998","level":"Warning","message":"Planning algorithm failed to generate a valid path to (-2.02, -1.21)","module":"Planner","property_id":"MFALCON","resolution":"Null","robot_id":"DROID","source":"navfn_planner","timestamp":"2020-05-29T15:41:30.319082"}

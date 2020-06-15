@@ -53,8 +53,13 @@ class ListenerTest(unittest.TestCase):
         
         # Log file info
         parentdir = os.path.expanduser("~")
-        # if (parentdir != "/root"): 
-        cls.logfolder = os.path.join(parentdir,"ros2_dd_ws", "src", "rosrect-listener-agent", "test", "logs")
+        # if (parentdir != "/root"):
+        parentdir = parentdir + "/.cognicept/agent/logs/latest_ros2_log.txt"
+        f = open(parentdir)
+        latest_log_loc = f.readline()
+        latest_log_loc = latest_log_loc[:-1]
+        f.close()
+        cls.logfolder = latest_log_loc
         # else:
             # self.logfolder = "/app/logs"
         
@@ -118,7 +123,7 @@ class ListenerTest(unittest.TestCase):
         )
         self.addCleanup(self.node.destroy_publisher, pub)
 
-        # Create and publish a sample message to establish pumbling for the first time
+        # Create and publish a sample message to establish plumbing for the first time
         msg = rcl_interfaces.msg.Log()
         msg.msg = "Sample message to establish plumbing?"
         msg.level = 40
@@ -174,14 +179,12 @@ class ListenerTest(unittest.TestCase):
             LOGID += 1
             filename = self.logname + str(LOGID) + self.logext
             file_flag = os.path.isfile(filename)
-            
             if file_flag is False:
                 LOGID = 16
                 break
 
             # Retrieve values
             with open(filename) as json_file:
-                print(filename)
                 data = json.load(json_file)
                 message.append(data['message'])
                 event_id.append(data['event_id'])
