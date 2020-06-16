@@ -41,8 +41,8 @@ You can get access to the agent by cloning this repo and building the ROS node. 
     ```
     $ sudo apt-get install ros-< ROSDISTRO >-launch-testing*
     ```
-   
-   Here < ROSDISTRO > stands for your ROS 2 distribution such as `dashing` or `eloquent`.
+    
+    Here < ROSDISTRO > stands for your ROS 2 distribution such as `dashing` or `eloquent`.
 
 4. Change to your `src` folder of the ROS 2 workspace directory. Generally it is as follows:
 
