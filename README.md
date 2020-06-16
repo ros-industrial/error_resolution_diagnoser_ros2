@@ -36,31 +36,39 @@ You can get access to the agent by cloning this repo and building the ROS node. 
     $ sudo apt-get install libcpprest-dev
     ```
 
-2. Change to your `src` folder of the ROS 2 workspace directory. Generally it is as follows:
+3. Install ROS 2's launch testing framework if it is not installed already using `apt-get`:
+    
+    ```
+    $ sudo apt-get install ros-< ROSDISTRO >-launch-testing*
+    ```
+   
+   Here < ROSDISTRO > stands for your ROS 2 distribution such as `dashing` or `eloquent`.
+
+4. Change to your `src` folder of the ROS 2 workspace directory. Generally it is as follows:
 
     ```
     $ cd ~/ros2_ws/src
     ```
 
-3. Clone the repo:
+5. Clone the repo:
 
     ```git
     $ git clone https://github.com/cognicept-admin/rosrect-listener-agent-ros2
     ```
 
-4. Change to your `ros2_ws` folder:
+6. Change to your `ros2_ws` folder:
 
     ```
     $ cd ..
     ``` 
 
-5. Issue `colcon build` to build the ROS node:
+7. Issue `colcon build` to build the ROS node:
 
     ```
     $ colcon build --symlink-install
     ```
 
-6. Check if node has built correctly and registered using `ros2 pkg`:
+8. Check if node has built correctly and registered using `ros2 pkg`:
 
     ```
     $ ros2 pkg list | grep rosrect
