@@ -1,13 +1,13 @@
 #include <gtest/gtest.h>
 #include <fstream>
 #include <boost/filesystem.hpp>
-#include <rosrect-listener-agent/state_manager.h>
+#include <rosrect-listener-agent-ros2/state_manager.h>
 
 using namespace web::json;                  // JSON features
 using namespace web;                        // Common features like URIs.
 
 // Log file settings
-std::string package_path = ament_index_cpp::get_package_prefix("rosrect-listener-agent");
+std::string package_path = ament_index_cpp::get_package_prefix("rosrect-listener-agent-ros2");
 int install_pos = package_path.find("install");
 std::string log_name = (package_path.replace(install_pos, 7, "src")) + "/test/logs/logData";
 std::string log_ext = ".json";
