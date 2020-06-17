@@ -66,7 +66,13 @@ You can get access to the agent by cloning this repo and building the ROS node. 
     $ colcon build --symlink-install
     ```
 
-8. Check if node has built correctly and registered using `ros2 pkg`:
+8. Source the changes by running the `setup.bash` file:
+
+    ```
+    $ source ~/ros2_ws/install/setup.bash
+    ```
+
+9. Check if node has built correctly and registered using `ros2 pkg`:
 
     ```
     $ ros2 pkg list | grep rosrect
