@@ -6,7 +6,7 @@ using namespace web;                        // Common features like URIs.
 StateManager::StateManager(){
 
     // Boolean flag to decide whether to suppress a message or not
-    bool suppress_flag = false;
+    this->suppress_flag = false;
 
     // Timeout parameter in minutes for alert timeout
     float alert_timeout_limit = 5.0;
@@ -32,11 +32,13 @@ std::vector<std::string> StateManager::does_exist(std::string robot_code, std::s
 
 void StateManager::check_message(std::string agent_type, std::string robot_code, const rcl_interfaces::msg::Log::SharedPtr data){
 
-    if(agent_type == "DB"){
-        // std::cout << "Checking with DB..." << std::endl;
-        /* Error classification features in development below */
-        this->check_message_db(robot_code, data);
-
+    if(agent_type == "ECS"){
+        // std::cout << "Checking with ECS..." << std::endl;
+        this->check_message_ecs(robot_code, data);
+    }
+    else if((agent_type == "ERT") || (agent_type == "DB")){
+        // std::cout << "Checking with ERT..." << std::endl;
+        this->check_message_ert(robot_code, data);
     }
     else{
         // std::cout << "Checking with ROS..." << std::endl;
@@ -45,8 +47,86 @@ void StateManager::check_message(std::string agent_type, std::string robot_code,
 
 }
 
-/* Error classification features in development below */
-void StateManager::check_message_db(std::string robot_code, const rcl_interfaces::msg::Log::SharedPtr data){
+void StateManager::check_message_ecs(std::string robot_code, const rcl_interfaces::msg::Log::SharedPtr data){
+
+    // Parse message to query-able format
+    std::string msg_text = data->msg;
+    // std::replace(msg_text.begin(), msg_text.end(), '/', ' ');
+    // std::cout << "Querying: " << msg_text << std::endl;
+
+    // Check error classification, ECS
+    json::value msg_info = this->api_instance.check_error_classification(msg_text);
+    
+    bool ecs_hit = !(msg_info.is_null());
+    // std::cout << "ECS Hit: " << ecs_hit << std::endl;
+
+    if(ecs_hit){
+        // ECS has a hit, follow the message cycle
+        // std::cout << "JSON parsed";
+        // msg_info = msg_info[0];
+
+        int error_level = (msg_info.at(U("severity"))).as_integer();
+        // std::cout << "Level: " << error_level << std::endl;
+        std::string error_msg = (msg_info.at(U("error_text"))).as_string();
+        // std::cout << "Text: " << error_msg << std::endl;
+
+        if((error_level == 8) || (error_level ==16)){
+            // std::cout << "Error... " << data->msg << std::endl;
+            // Check for suppression
+            this->check_error(robot_code, error_msg);
+        }
+        else if(error_level == 4){
+            // std::cout << "Warning... " << data->msg << std::endl;
+            // Check for suppression
+            this->check_warning(robot_code, error_msg);
+        }
+        else{
+            // std::cout << "Info... " << data->msg << std::endl;
+            // Check for suppression
+            this->check_info(robot_code, error_msg);
+        }
+        
+        // Process result of event
+        if(this->suppress_flag){
+            // If suppressed, do nothing
+            // std::cout << "Suppressed!" << std::endl;
+        }
+        else{
+            // std::cout << "Not suppressed!" << std::endl;
+            // If not suppressed, send it to event to update
+            this->event_instance.update_log(data, msg_info, "ECS");
+
+            // Push to stream
+            this->api_instance.push_event_log(this->event_instance.get_log());
+
+            // Get compounding flag
+            bool cflag = (msg_info.at(U("compounding_flag"))).as_bool();
+            
+            if(cflag == true){
+                // Nothing to do here unless it is a compounding error
+                if((error_level == 8) || (error_level == 16)){
+                    // Push on ALL errors / One named Info msg
+                    // Clear only event log since this is compounding
+                    this->event_instance.clear_log();
+                }
+                else{
+                    // Nothing to do
+                }
+            }   
+            else{
+                // This is a compounding log, Clear everything
+                this->clear();
+            }
+
+        }
+
+    }
+    else{
+        // ECS does not have a hit, normal operation resumes
+    }
+}
+
+void StateManager::check_message_ert(std::string robot_code, const rcl_interfaces::msg::Log::SharedPtr data){
 
     // Parse message to query-able format
     std::string msg_text = data->msg;
@@ -93,7 +173,7 @@ void StateManager::check_message_db(std::string robot_code, const rcl_interfaces
         else{
             // std::cout << "Not suppressed!" << std::endl;
             // If not suppressed, send it to event to update
-            this->event_instance.update_log(data, msg_info);
+            this->event_instance.update_log(data, msg_info, "ERT");
 
             // Push to stream
             this->api_instance.push_event_log(this->event_instance.get_log());
@@ -151,7 +231,7 @@ void StateManager::check_message_ros(std::string robot_code, const rcl_interface
     else{
         // std::cout << "Not suppressed!" << std::endl;
         // If not suppressed, send it to event to update
-        this->event_instance.update_log(data, json::value::null());
+        this->event_instance.update_log(data, json::value::null(), "ROS");
 
         // Push log
         this->api_instance.push_event_log(this->event_instance.get_log());

@@ -23,6 +23,7 @@ class BackendApi {
   std::string site_id;
   std::string agent_id;
   std::string agent_mode;
+  std::string agent_type;
   std::string log_dir;
   std::string log_name;
   std::string log_ext;
@@ -38,7 +39,6 @@ class BackendApi {
   ~BackendApi();
   void push_event_log(std::vector<std::vector<std::string>>); // Create and push single JSON record payload data for downstream consumption
   web::json::value create_event_log(std::vector<std::vector<std::string>>); // Create JSON "multiple record" payload data for downstream consumption
-  /* Error classification features in development below */
   pplx::task<void> query_error_classification(std::string); // Query error classification database table
   web::json::value check_error_classification(std::string); // Entry point for error classification
 };

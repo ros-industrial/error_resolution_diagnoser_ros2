@@ -11,9 +11,12 @@ cs_listener::cs_listener()
   this->robot_code = std::getenv("ROBOT_CODE");
 
   // Depending on ENV variable, communicate to user
-  if (this->agent_type == "DB")
+  if ((this->agent_type == "DB") || (this->agent_type == "ERT"))
   {
-    std::cout << "Subscribed to Listener Agent with DB Access..." << std::endl;
+    std::cout << "Subscribed to Listener Agent with ERT Access..." << std::endl;
+  }
+  else if(this->agent_type == "ECS"){
+    std::cout << "Subscribed to Listener Agent with ECS Access..." << std::endl;
   }
   else
   {

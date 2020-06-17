@@ -8,7 +8,7 @@ RobotEvent::RobotEvent(){
     this->event_id_str = "";
 }
 
-void RobotEvent::update_log(const rcl_interfaces::msg::Log::SharedPtr data, json::value msg_info){
+void RobotEvent::update_log(const rcl_interfaces::msg::Log::SharedPtr data, json::value msg_info, std::string agent_type){
     // std::cout << "Event log updating..." << std::endl;
     // Each message has a queue id
     this->queue_id += 1;
@@ -29,20 +29,29 @@ void RobotEvent::update_log(const rcl_interfaces::msg::Log::SharedPtr data, json
     std::string description = "Null";
     std::string resolution = "Null"; 
 
-    if(msg_info.is_null()){
-        // std::cout << "Populating from ROS!" << std::endl;
-        // This is the direct ROS feed case
-        // Assign message
+    if(agent_type == "ECS"){
+        // std::cout << "Populating from ECS!" << std::endl;
+        // This is the ECS case
+        // Get all the data from the JSON object
+        level = (msg_info.at(U("severity"))).as_integer();
+        bool cflag_bool = (msg_info.at(U("compounding_flag"))).as_bool();
+        if (cflag_bool){
+            cflag = "true";
+        }
+        else{
+            cflag = "false";
+        }
+        module = (msg_info.at(U("error_module"))).as_string();
+        source = (msg_info.at(U("error_source"))).as_string();
         message = data->msg;
-        // Assign source
-        source = data->name;
-
-        // Assign level
-        level = data->level;
+        // Setting description to stored error_text. Needs to be set appropriately later
+        description = (msg_info.at(U("error_text"))).as_string();
+        // Resolution needs to be set appropriately later.
+        // resolution = (msg_info.at(U("error_resolution"))).as_string();
     }
-    else{
-        // std::cout << "Populating from DB!" << std::endl;
-        // This is the DB case
+    else if((agent_type == "ERT") || (agent_type == "DB")){
+        // std::cout << "Populating from ERT!" << std::endl;
+        // This is the ERT case
         // Get all the data from the JSON object
         level = (msg_info.at(U("error_level"))).as_integer();
         bool cflag_bool = (msg_info.at(U("compounding_flag"))).as_bool();
@@ -57,6 +66,17 @@ void RobotEvent::update_log(const rcl_interfaces::msg::Log::SharedPtr data, json
         message = data->msg;
         description = (msg_info.at(U("error_description"))).as_string();
         resolution = (msg_info.at(U("error_resolution"))).as_string();
+    }
+    else{
+        // std::cout << "Populating from ROS!" << std::endl;
+        // This is the direct ROS feed case
+        // Assign message
+        message = data->msg;
+        // Assign source
+        source = data->name;
+
+        // Assign level
+        level = data->level;
     }
 
     // Update event id

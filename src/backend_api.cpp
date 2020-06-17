@@ -17,6 +17,7 @@ BackendApi::BackendApi() {
   this->site_id = std::getenv("SITE_CODE");
   this->agent_id = std::getenv("AGENT_ID");
   this->agent_mode = std::getenv("AGENT_MODE");
+  this->agent_type = std::getenv("AGENT_TYPE");
 
   // File variables
   this->log_dir = std::getenv("HOME");
@@ -65,8 +66,20 @@ BackendApi::BackendApi() {
   /* Error classification features in development below */
   // Error classification API variables
   this->ecs_api_host = std::getenv("ECS_API");
-  this->ecs_api_endpoint = "/api/ert/getErrorData/";
   this->ecs_robot_model = std::getenv("ECS_ROBOT_MODEL");
+
+  if((this->agent_type == "ERT") || (this->agent_type == "DB")) {
+    // This configures the endpoint to ERT queries. Must be used only for testing. Undocumented.
+    this->ecs_api_endpoint = "/api/ert/getErrorData/";
+  }
+  else if(this->agent_type == "ECS") {
+    // This configures the endpoint to ECS queries. Production version.
+    this->ecs_api_endpoint = "/api/ecs/getErrorData/";
+  }
+  else {
+    // This means the agent is running in ROS mode. So no need to configure endpoint.
+    this->ecs_api_endpoint = "/api/ert/getErrorData/";
+  }
 }
 
 BackendApi::~BackendApi() {

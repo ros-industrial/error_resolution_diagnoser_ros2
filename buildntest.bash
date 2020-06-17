@@ -8,4 +8,4 @@ echo -e "\e[32mSTEP 3: Getting failures...\e[0m"
 colcon test-result --verbose
 echo -e "\e[32mSTEP 4: Getting all test results...\e[0m" 
 colcon test-result --all
-cd ~/ros2_dd_ws/src/rosrect-listener-agent/
+cd ~/ros2_dd_ws/src/rosrect-listener-agent-ros2/

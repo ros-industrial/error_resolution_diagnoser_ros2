@@ -33,7 +33,8 @@ class StateManager {
     // ~StateManager();
     std::vector<std::string> does_exist(std::string, std::string); // Check if message already logged with this robot
     void check_message(std::string, std::string, const rcl_interfaces::msg::Log::SharedPtr); // Entry point to state management that calls the correct variant of check_message*
-    void check_message_db(std::string, const rcl_interfaces::msg::Log::SharedPtr); // State management in case of a ROS direct feed
+    void check_message_ecs(std::string, const rcl_interfaces::msg::Log::SharedPtr); // State management in case of ECS feedback
+    void check_message_ert(std::string, const rcl_interfaces::msg::Log::SharedPtr); // State management in case of ERT feedback
     void check_message_ros(std::string, const rcl_interfaces::msg::Log::SharedPtr); // State management in case of a ROS direct feed
     void check_error(std::string, std::string); // Check error suppression
     void check_warning(std::string, std::string); // Check warning suppression
