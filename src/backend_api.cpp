@@ -1,23 +1,19 @@
 #include <rosrect-listener-agent/backend_api.h>
 
-using namespace utility;                    // Common utilities like string conversions
-using namespace web;                        // Common features like URIs.
-using namespace web::http;                  // Common HTTP functionality
-using namespace web::http::client;          // HTTP client features
-using namespace concurrency::streams;       // Asynchronous streams
-using namespace ::pplx;                     // PPLX for tasks
-using namespace web::json;                  // JSON features
+using namespace utility;              // Common utilities like string conversions
+using namespace web;                  // Common features like URIs.
+using namespace web::http;            // Common HTTP functionality
+using namespace web::http::client;    // HTTP client features
+using namespace concurrency::streams; // Asynchronous streams
+using namespace ::pplx;               // PPLX for tasks
+using namespace web::json;            // JSON features
 
-BackendApi::BackendApi() {
+BackendApi::BackendApi()
+{
 
   // std::cout << "Creating API instance..." << std::endl;
-
-  // Other environment variables
-  this->robot_id = std::getenv("ROBOT_CODE");
-  this->site_id = std::getenv("SITE_CODE");
-  this->agent_id = std::getenv("AGENT_ID");
-  this->agent_mode = std::getenv("AGENT_MODE");
-  this->agent_type = std::getenv("AGENT_TYPE");
+  // Check and set environment variables
+  this->check_environment();
 
   // File variables
   this->log_dir = std::getenv("HOME");
@@ -30,64 +26,192 @@ BackendApi::BackendApi() {
   std::string run_id = uuid_str.str();
   // Clear stream
   uuid_str.clear();
-  
+
   this->log_dir.append("/.cognicept/agent/logs/");
-  std::string latest_log = this->log_dir + "latest_ros2_log.txt";
+  std::string latest_log = this->log_dir + "latest_log_loc.txt";
+  std::string disp_dir = "/$HOME/.cognicept/agent/logs/";
   this->log_dir.append(run_id);
+  disp_dir.append(run_id);
 
   boost::filesystem::path dir2(this->log_dir);
   if (boost::filesystem::exists(dir2))
   {
-    std::cout<< "Agent log directory already exists: "<< this->log_dir <<std::endl;
+    std::cout << "Agent log directory already exists: " << disp_dir << std::endl;
   }
   else
   {
-    if(boost::filesystem::create_directories(dir2))
+    if (boost::filesystem::create_directories(dir2))
     {
-      std::cout<< "Agent log directory created: "<< this->log_dir <<std::endl;
+      std::cout << "Agent log directory created: " << disp_dir << std::endl;
     }
   }
 
   // Write to file
   std::ofstream outfile;
   outfile.open(latest_log);
-  outfile << std::setw(4) << this->log_dir << std::endl;
+  outfile << std::setw(4) << disp_dir << std::endl;
   outfile.close();
-  std::cout << "Updated latest log location in: " << latest_log << std::endl;
-  
+  std::cout << "Updated latest log location in: " << "/$HOME/.cognicept/agent/logs/latest_log_loc.txt" << std::endl;
+
   this->log_name = this->log_dir + "/logData";
   this->log_ext = ".json";
   this->log_id = 0;
 
-  if(this->agent_mode == "TEST"){
-    std::cout << "TEST mode is ON. JSON Logs will be saved here: " << this->log_dir << std::endl;
+  if (this->agent_mode != "PROD")
+  {
+    std::cout << "TEST mode is ON. JSON Logs will be saved here: " << disp_dir << std::endl;
   }
 
   /* Error classification features in development below */
   // Error classification API variables
-  this->ecs_api_host = std::getenv("ECS_API");
-  this->ecs_robot_model = std::getenv("ECS_ROBOT_MODEL");
 
-  if((this->agent_type == "ERT") || (this->agent_type == "DB")) {
+  if ((this->agent_type == "ERT") || (this->agent_type == "DB"))
+  {
     // This configures the endpoint to ERT queries. Must be used only for testing. Undocumented.
     this->ecs_api_endpoint = "/api/ert/getErrorData/";
   }
-  else if(this->agent_type == "ECS") {
+  else if (this->agent_type == "ECS")
+  {
     // This configures the endpoint to ECS queries. Production version.
     this->ecs_api_endpoint = "/api/ecs/getErrorData/";
   }
-  else {
+  else
+  {
     // This means the agent is running in ROS mode. So no need to configure endpoint.
     this->ecs_api_endpoint = "/api/ert/getErrorData/";
   }
 }
 
-BackendApi::~BackendApi() {
+BackendApi::~BackendApi()
+{
 
   // std::cout << "Logged out of API..." << std::endl;
 }
 
-void BackendApi::push_event_log(std::vector<std::vector<std::string>> log){
+void BackendApi::check_environment()
+{
+  // Other environment variables
+  std::cout << "=======================Environment variables setup======================" << std::endl;
+  // AGENT_TYPE
+  if (std::getenv("AGENT_TYPE"))
+  {
+    // Success case
+    this->agent_type = std::getenv("AGENT_TYPE");
+    std::cout << "Environment variable AGENT_TYPE set to: " << this->agent_type << std::endl;
+    // ECS_API, ECS_ROBOT_MODEL
+    if ((this->agent_type == "DB") || (this->agent_type == "ERT") || (this->agent_type == "ECS"))
+    {
+      if (std::getenv("ECS_API"))
+      {
+        // Success case
+        this->ecs_api_host = std::getenv("ECS_API");
+        std::cout << "Environment variable ECS_API set to: " << this->ecs_api_host << std::endl;
+        if (std::getenv("ECS_ROBOT_MODEL"))
+        {
+          // Success case
+          this->ecs_robot_model = std::getenv("ECS_ROBOT_MODEL");
+          std::cout << "Environment variable ECS_ROBOT_MODEL set to: " << this->ecs_robot_model << std::endl;
+        }
+        else
+        {
+          // Failure case - Default
+          std::cerr << "Agent configured in " << this->agent_type << " mode but ECS_ROBOT_MODEL environment variable is not configured. Defaulting back to ROS mode instead..." << std::endl;
+          this->agent_type = "ROS";
+          this->agent_type = "ROS";
+        }
+      }
+      else
+      {
+        // Failure case - Default
+        std::cerr << "Agent configured in " << this->agent_type << " mode but ECS_API environment variable is not configured. Defaulting back to ROS mode instead..." << std::endl;
+        this->agent_type = "ROS";
+      }
+    }
+  }
+  else
+  {
+    // Failure case - Default
+    this->agent_type = "ROS";
+    std::cerr << "Environment variable AGENT_TYPE unspecified. Defaulting to ROS mode..." << std::endl;
+  }
+
+  // ROBOT_CODE
+  if (std::getenv("ROBOT_CODE"))
+  {
+    // Success case
+    this->robot_id = std::getenv("ROBOT_CODE");
+    std::cout << "Environment variable ROBOT_CODE set to: " << this->robot_id << std::endl;
+  }
+  else
+  {
+    // Failure case - Default
+    this->robot_id = "Undefined";
+    std::cerr << "Environment variable ROBOT_CODE unspecified. Defaulting to 'Undefined'..." << std::endl;
+  }
+
+  // SITE_CODE
+  if (std::getenv("SITE_CODE"))
+  {
+    // Success case
+    this->site_id = std::getenv("SITE_CODE");
+    std::cout << "Environment variable SITE_CODE set to: " << this->site_id << std::endl;
+  }
+  else
+  {
+    // Failure case - Default
+    this->site_id = "Undefined";
+    std::cerr << "Environment variable SITE_CODE unspecified. Defaulting to 'Undefined'..." << std::endl;
+  }
+
+  // AGENT_ID
+  if (std::getenv("AGENT_ID"))
+  {
+    // Success case
+    this->agent_id = std::getenv("AGENT_ID");
+    std::cout << "Environment variable AGENT_ID set to: " << this->agent_id << std::endl;
+  }
+  else
+  {
+    // Failure case - Default
+    this->agent_id = "Undefined";
+    std::cerr << "Environment variable AGENT_ID unspecified. Defaulting to 'Undefined'..." << std::endl;
+  }
+
+  // AGENT_MODE, AGENT_POST_API
+  if (std::getenv("AGENT_MODE"))
+  {
+    // Success case
+    this->agent_mode = std::getenv("AGENT_MODE");
+    std::cout << "Environment variable AGENT_MODE set to: " << this->agent_mode << std::endl;
+    // Specially handle POST_TEST case
+    if (this->agent_mode == "POST_TEST")
+    {
+      if (std::getenv("AGENT_POST_API"))
+      {
+        // Success case
+        this->agent_post_api = std::getenv("AGENT_POST_API");
+        std::cout << "Environment variable AGENT_POST_API set to: " << this->agent_post_api << std::endl;
+      }
+      else
+      {
+        // Failure case - Default
+        this->agent_mode = "JSON_TEST";
+        std::cerr << "Agent configured in POST_TEST mode but AGENT_POST_API environment variable is not configured. Defaulting back to JSON_TEST mode instead..." << std::endl;
+      }
+    }
+  }
+  else
+  {
+    // Failure case - Default
+    this->agent_mode = "JSON_TEST";
+    std::cerr << "Environment variable AGENT_MODE unspecified. Defaulting to 'JSON_TEST'..." << std::endl;
+  }
+
+  std::cout << "=========================================================================" << std::endl;
+}
+
+void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
+{
   // Create JSON payload and push to kinesis
   auto last_log = log.back();
   int idx = 0;
@@ -102,15 +226,16 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log){
   std::string description = last_log[idx++];
   std::string resolution = last_log[idx++];
   std::string event_id = last_log[idx++];
-  
+
   bool ticketBool = false;
-  if(((level == "8") || (level == "40")) && ((cflag == "false") || (cflag == "Null"))){
+  if (((level == "8") || (level == "40")) && ((cflag == "false") || (cflag == "Null")))
+  {
     ticketBool = true;
   }
   else
   {
     ticketBool = false;
-  }  
+  }
 
   // Create JSON object
   json::value payload = json::value::object();
@@ -144,8 +269,9 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log){
   payload[ticketKey] = json::value::boolean(U(ticketBool));
   payload[descKey] = json::value::string(U(description));
   payload[resKey] = json::value::string(U(resolution));
-  
-  if(this->agent_mode == "TEST"){
+
+  if (this->agent_mode == "TEST")
+  {
     // Write the current JSON value to a stream with the native platform character width
     utility::stringstream_t stream;
     payload.serialize(stream);
@@ -153,7 +279,7 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log){
     // Display the string stream
     // std::cout << stream.str() << std::endl;
     std::cout << level << " Event logged with id: " << event_id << std::endl;
-    
+
     // Write to file
     std::ofstream outfile;
     this->log_id++;
@@ -163,11 +289,11 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log){
     outfile << std::setw(4) << stream.str() << std::endl;
     outfile.close();
   }
-  
 }
 
-json::value BackendApi::create_event_log(std::vector<std::vector<std::string>> log){
-  
+json::value BackendApi::create_event_log(std::vector<std::vector<std::string>> log)
+{
+
   // Create JSON object
   json::value event_log = json::value::array();
 
@@ -184,7 +310,8 @@ json::value BackendApi::create_event_log(std::vector<std::vector<std::string>> l
   utility::string_t srcKey(U("Source"));
 
   // std::cout << "Creating JSON log" << std::endl;
-  for(int queue_id = 0; queue_id < log.size(); queue_id++)  {
+  for (int queue_id = 0; queue_id < log.size(); queue_id++)
+  {
 
     // Get row
     auto current_row = log[queue_id];
@@ -211,83 +338,79 @@ json::value BackendApi::create_event_log(std::vector<std::vector<std::string>> l
     event_log[queue_id][msgKey] = json::value::string(U(message));
     event_log[queue_id][descKey] = json::value::string(U(description));
     event_log[queue_id][resKey] = json::value::string(U(resolution));
-    event_log[queue_id][eidKey] = json::value::string(U(event_id));    
-    event_log[queue_id][qidKey] = json::value::string(U(qidstr));       
-
+    event_log[queue_id][eidKey] = json::value::string(U(event_id));
+    event_log[queue_id][qidKey] = json::value::string(U(qidstr));
   }
 
-  return(event_log);
-
+  return (event_log);
 }
 
 /* Error Classification Features in development below */
 
-pplx::task<void> BackendApi::query_error_classification(std::string msg_text){  
-  
-  return pplx::create_task([this, msg_text]
-  {
-    // Create HTTP client configuration
-    http_client_config config;
-    config.set_validate_certificates(false);
-    
-    // Create HTTP client
-    http_client client(this->ecs_api_host, config);
+pplx::task<void> BackendApi::query_error_classification(std::string msg_text)
+{
 
-    // Build request
-    http_request req(methods::GET);
+  return pplx::create_task([this, msg_text] {
+           // Create HTTP client configuration
+           http_client_config config;
+           config.set_validate_certificates(false);
 
-    // Build request URI.
-    uri_builder builder(this->ecs_api_endpoint);
-    builder.append_query("RobotModel", this->ecs_robot_model);
-    builder.append_query("ErrorText", msg_text);
-    req.set_request_uri(builder.to_string());
-        
-    return client.request(req);
+           // Create HTTP client
+           http_client client(this->ecs_api_host, config);
 
-  })
-  .then([this](http_response response)
-  {
-    
-    // If successful, return JSON query
-    if(response.status_code() == status_codes::OK)
-    {
-      auto body = response.extract_string();
-      std::string body_str = body.get().c_str();
-      this->msg_resp = body_str;
-    }
-    // If not, request failed
-    else
-    {
-      std::cout << "Request failed" << std::endl;
-    }
-  });
+           // Build request
+           http_request req(methods::GET);
+
+           // Build request URI.
+           uri_builder builder(this->ecs_api_endpoint);
+           builder.append_query("RobotModel", this->ecs_robot_model);
+           builder.append_query("ErrorText", msg_text);
+           req.set_request_uri(builder.to_string());
+
+           return client.request(req);
+         })
+      .then([this](http_response response) {
+        // If successful, return JSON query
+        if (response.status_code() == status_codes::OK)
+        {
+          auto body = response.extract_string();
+          std::string body_str = body.get().c_str();
+          this->msg_resp = body_str;
+        }
+        // If not, request failed
+        else
+        {
+          std::cout << "Request failed" << std::endl;
+        }
+      });
 }
 
-json::value BackendApi::check_error_classification(std::string msg_text){
+json::value BackendApi::check_error_classification(std::string msg_text)
+{
 
   this->query_error_classification(msg_text).wait();
   std::string temp_msg = this->msg_resp;
   json::value response = json::value::parse(temp_msg);
   json::value response_data;
-  
-  try{
+
+  try
+  {
     // std::cout << "Trying to get data..." << std::endl;
-    response_data = response.at(U("data")); 
-    
+    response_data = response.at(U("data"));
+
     // // Write the current JSON value to a stream with the native platform character width
     // utility::stringstream_t stream;
     // response_data.serialize(stream);
 
     // Display the string stream
-    // std::cout << "Get data: " << stream.str() << std::endl; 
-    return response_data[0];  
+    // std::cout << "Get data: " << stream.str() << std::endl;
+    return response_data[0];
   }
-  catch(const json::json_exception& e){
+  catch (const json::json_exception &e)
+  {
     // const std::exception& e
     // std::cout << " Can't get data, returning null" << std::endl;
     response_data = json::value::null();
     return response_data;
-  }   
-
+  }
 }
-
