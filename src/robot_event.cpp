@@ -1,21 +1,23 @@
 #include <rosrect-listener-agent/robot_event.h>
 
-using namespace web::json;                  // JSON features
-using namespace web;                        // Common features like URIs.
+using namespace web::json; // JSON features
+using namespace web;       // Common features like URIs.
 
-RobotEvent::RobotEvent(){
+RobotEvent::RobotEvent()
+{
 
     this->event_id_str = "";
 }
 
-void RobotEvent::update_log(const rcl_interfaces::msg::Log::SharedPtr data, json::value msg_info, std::string agent_type){
+void RobotEvent::update_log(const rcl_interfaces::msg::Log::SharedPtr data, json::value msg_info, std::string agent_type)
+{
     // std::cout << "Event log updating..." << std::endl;
     // Each message has a queue id
     this->queue_id += 1;
 
     // Get current time
-    boost::posix_time::ptime timeLocal = boost::posix_time::microsec_clock::local_time();
-    std::string time_str = to_iso_extended_string(timeLocal);
+    boost::posix_time::ptime utcTime = boost::posix_time::microsec_clock::universal_time();
+    std::string time_str = to_iso_extended_string(utcTime);
 
     // Event log order
     // 'QID', 'Date/Time', 'Level', 'Compounding',
@@ -27,18 +29,21 @@ void RobotEvent::update_log(const rcl_interfaces::msg::Log::SharedPtr data, json
     std::string source = "Null";
     std::string message = "Null";
     std::string description = "Null";
-    std::string resolution = "Null"; 
+    std::string resolution = "Null";
 
-    if(agent_type == "ECS"){
+    if (agent_type == "ECS")
+    {
         // std::cout << "Populating from ECS!" << std::endl;
         // This is the ECS case
         // Get all the data from the JSON object
         level = (msg_info.at(U("severity"))).as_integer();
         bool cflag_bool = (msg_info.at(U("compounding_flag"))).as_bool();
-        if (cflag_bool){
+        if (cflag_bool)
+        {
             cflag = "true";
         }
-        else{
+        else
+        {
             cflag = "false";
         }
         module = (msg_info.at(U("error_module"))).as_string();
@@ -49,16 +54,19 @@ void RobotEvent::update_log(const rcl_interfaces::msg::Log::SharedPtr data, json
         // Resolution needs to be set appropriately later.
         // resolution = (msg_info.at(U("error_resolution"))).as_string();
     }
-    else if((agent_type == "ERT") || (agent_type == "DB")){
+    else if ((agent_type == "ERT") || (agent_type == "DB"))
+    {
         // std::cout << "Populating from ERT!" << std::endl;
         // This is the ERT case
         // Get all the data from the JSON object
         level = (msg_info.at(U("error_level"))).as_integer();
         bool cflag_bool = (msg_info.at(U("compounding_flag"))).as_bool();
-        if (cflag_bool){
+        if (cflag_bool)
+        {
             cflag = "true";
         }
-        else{
+        else
+        {
             cflag = "false";
         }
         module = (msg_info.at(U("error_module"))).as_string();
@@ -67,7 +75,8 @@ void RobotEvent::update_log(const rcl_interfaces::msg::Log::SharedPtr data, json
         description = (msg_info.at(U("error_description"))).as_string();
         resolution = (msg_info.at(U("error_resolution"))).as_string();
     }
-    else{
+    else
+    {
         // std::cout << "Populating from ROS!" << std::endl;
         // This is the direct ROS feed case
         // Assign message
@@ -93,19 +102,21 @@ void RobotEvent::update_log(const rcl_interfaces::msg::Log::SharedPtr data, json
     event_details.push_back(description);
     event_details.push_back(resolution);
     event_details.push_back(this->event_id_str);
-    
+
     // Push to log
     this->event_log.push_back(event_details);
     // std::cout << "Event log updated!" << std::endl;
 }
 
-void RobotEvent::update_event_id(){
+void RobotEvent::update_event_id()
+{
     // Update event_id if necessary
-    
-    if (!(this->event_id_str.compare(""))){
+
+    if (!(this->event_id_str.compare("")))
+    {
         // Generate UUID
         boost::uuids::uuid uuid = boost::uuids::random_generator()();
-        
+
         // Stream
         std::stringstream uuid_str;
         uuid_str << uuid;
@@ -115,27 +126,30 @@ void RobotEvent::update_event_id(){
 
         // Clear stream
         uuid_str.clear();
-    }    
+    }
 }
 
-std::vector<std::vector<std::string>> RobotEvent::get_log(){
+std::vector<std::vector<std::string>> RobotEvent::get_log()
+{
     // Returns event log
 
     return this->event_log;
 }
 
-void RobotEvent::clear_log(){
+void RobotEvent::clear_log()
+{
     // Clears event log
 
     this->event_log.clear();
 }
 
-void RobotEvent::clear(){
+void RobotEvent::clear()
+{
     // Clear log and event_id
 
     // Clear log
     this->clear_log();
 
     // Clear event_id
-    this->event_id_str="";
+    this->event_id_str = "";
 }
