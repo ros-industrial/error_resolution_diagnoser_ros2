@@ -210,6 +210,50 @@ void BackendApi::check_environment()
   std::cout << "=========================================================================" << std::endl;
 }
 
+pplx::task<void> BackendApi::post_event_log(json::value payload)
+{
+  std::cout << "Posting" << std::endl;
+
+  return pplx::create_task([this, payload] {
+           // Create HTTP client configuration
+           http_client_config config;
+           config.set_validate_certificates(false);
+
+           // Create HTTP client
+           http_client client(this->agent_post_api, config);
+
+           // // Write the current JSON value to a stream with the native platform character width
+           // utility::stringstream_t stream;
+           // payload.serialize(stream);
+
+           // // Display the string stream
+           // std::cout << "Post data: " << stream.str() << std::endl;
+
+           // Build request
+           http_request req(methods::POST);
+           // req.headers().add("Authorization", this->headers);
+           req.set_request_uri("/api/agentstream/putRecord");
+           req.set_body(payload);
+
+           // Request ticket creation
+           std::cout << "Pushing downstream..." << std::endl;
+           return client.request(req);
+         })
+      .then([this](http_response response) {
+        // If successful, print ticket details
+        if (response.status_code() == status_codes::OK)
+        {
+          auto body = response.extract_string();
+          std::wcout << "Response: " << body.get().c_str() << std::endl;
+        }
+        // If not, request failed
+        else
+        {
+          std::cout << "Request failed" << std::endl;
+        }
+      });
+}
+
 void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
 {
   // Create JSON payload and push to kinesis
@@ -265,12 +309,23 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
   payload[lvlKey] = json::value::string(U(level));
   payload[modKey] = json::value::string(U(module));
   payload[srcKey] = json::value::string(U(source));
-  payload[cKey] = json::value::string(U(cflag));
+  if (cflag == "false")
+  {
+    payload[cKey] = json::value::boolean(U(false));
+  }
+  else if(cflag == "true")
+  {
+    payload[cKey] = json::value::boolean(U(true));
+  }
+  else
+  {
+    payload[cKey] = json::value::string(U("Null"));    
+  }
   payload[ticketKey] = json::value::boolean(U(ticketBool));
   payload[descKey] = json::value::string(U(description));
   payload[resKey] = json::value::string(U(resolution));
 
-  if (this->agent_mode == "TEST")
+  if (this->agent_mode == "JSON_TEST")
   {
     // Write the current JSON value to a stream with the native platform character width
     utility::stringstream_t stream;
@@ -278,7 +333,7 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
 
     // Display the string stream
     // std::cout << stream.str() << std::endl;
-    std::cout << level << " Event logged with id: " << event_id << std::endl;
+    std::cout << level << " level event logged with id: " << event_id << std::endl;
 
     // Write to file
     std::ofstream outfile;
@@ -288,6 +343,28 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
     outfile.open(filename);
     outfile << std::setw(4) << stream.str() << std::endl;
     outfile.close();
+  }
+  else if (this->agent_mode == "POST_TEST")
+  {
+    // Write the current JSON value to a stream with the native platform character width
+    utility::stringstream_t stream;
+    payload.serialize(stream);
+
+    // Display the string stream
+    // std::cout << stream.str() << std::endl;
+    std::cout << level << " level event logged with id: " << event_id << std::endl;
+
+    // Write to file
+    std::ofstream outfile;
+    this->log_id++;
+    std::string filename = this->log_name + std::to_string(this->log_id) + this->log_ext;
+    std::cout << filename << std::endl;
+    outfile.open(filename);
+    outfile << std::setw(4) << stream.str() << std::endl;
+    outfile.close();
+
+    // Post downstream
+    this->post_event_log(payload).wait();
   }
 }
 
