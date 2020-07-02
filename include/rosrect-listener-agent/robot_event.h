@@ -23,7 +23,7 @@ class RobotEvent {
 
     public:
     RobotEvent();
-    void update_log(const rcl_interfaces::msg::Log::SharedPtr, web::json::value, std::string); // Append to event log
+    void update_log(const rcl_interfaces::msg::Log::SharedPtr, web::json::value, web::json::value, std::string); // Append to event log
     void update_event_id(); // Update event id, create and udpate if necessary
     std::vector<std::vector<std::string>> get_log(); // Return event log
     void clear_log(); // Clear only event log
