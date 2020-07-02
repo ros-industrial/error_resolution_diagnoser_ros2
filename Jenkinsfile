@@ -1,5 +1,5 @@
 pipeline{
-  agent { label 'ubuntu' }
+  agent { label 'ros2' }
   stages{
     stage('--test--'){
       steps{
@@ -8,16 +8,16 @@ pipeline{
     }
     stage('--build--'){
       steps{
-            sh '''
-            ls
-            sh test.sh
-            '''
-
+        echo 'building tests'
+        sh '''
+           ls
+           sh cognicept-runtest.sh
+           '''
       }
     }
     stage ("--Extract test results--") {
     steps {
-    cobertura coberturaReportFile: 'myxmlfile.xml'
+      echo 'extracting test results - 2'
     }
     }
   }

@@ -79,7 +79,7 @@ You can get access to the agent by cloning this repo and building the ROS node. 
       rosrect-listener-agent-ros2
     ```
 
-That is it for the installation!
+That is it for the installation. 
 
 ## Running tests
 Optionally, you can run the unit tests by following steps below. 

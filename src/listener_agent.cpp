@@ -1,14 +1,11 @@
-#include <rosrect-listener-agent/listener_agent.h>
-
+#include <rosrect-listener-agent-ros2/listener_agent.h>
 using std::placeholders::_1;
-using std::placeholders::_2;
-using std::placeholders::_3;
 using namespace std::chrono_literals;
 using namespace web::json; // JSON features
 using namespace web;       // Common features like URIs.
 
-cs_listener::cs_listener()
-    : Node("rosrect_listener_agent_node")
+cs_listener::cs_listener() 
+: Node("rosrect_listener_agent_ros2_node")
 {
   // Constructor
 
@@ -186,6 +183,7 @@ void cs_listener::setup_telemetry()
 
 void cs_listener::log_callback(const rcl_interfaces::msg::Log::SharedPtr rosmsg)
 {
+
   if (rosmsg->name != "rviz2")
   {
     std::cout << "Message received: " << rosmsg->msg << std::endl;
