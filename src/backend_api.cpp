@@ -51,7 +51,8 @@ BackendApi::BackendApi()
   outfile.open(latest_log);
   outfile << std::setw(4) << disp_dir << std::endl;
   outfile.close();
-  std::cout << "Updated latest log location in: " << "/$HOME/.cognicept/agent/logs/latest_log_loc.txt" << std::endl;
+  std::cout << "Updated latest log location in: "
+            << "/$HOME/.cognicept/agent/logs/latest_log_loc.txt" << std::endl;
 
   this->log_name = this->log_dir + "/logData";
   this->log_ext = ".json";
@@ -254,6 +255,108 @@ pplx::task<void> BackendApi::post_event_log(json::value payload)
       });
 }
 
+void BackendApi::push_status(bool status, json::value telemetry)
+{
+  // Set all required info
+  boost::posix_time::ptime utcTime = boost::posix_time::microsec_clock::universal_time();
+  std::string timestr = to_iso_extended_string(utcTime);
+  std::string level = "Heartbeat";
+  std::string cflag = "Null";
+  std::string module = "Status";
+  std::string source = "Null";
+  std::string message = "Null";
+  std::string description = "Null";
+  std::string resolution = "Null";
+  std::string event_id = "Null";
+  bool ticketBool = false;
+
+  if (status)
+  {
+    message = "Online";
+    ticketBool = false;
+  }
+  else
+  {
+    message = "Offline";
+    ticketBool = true;
+  }
+
+  // Create JSON object
+  json::value payload = json::value::object();
+
+  // Create keys
+  utility::string_t agentKey(U("agent_id"));
+  utility::string_t roboKey(U("robot_id"));
+  utility::string_t propKey(U("property_id"));
+  utility::string_t eventidKey(U("event_id"));
+  utility::string_t timeKey(U("timestamp"));
+  utility::string_t msgKey(U("message"));
+  utility::string_t lvlKey(U("level"));
+  utility::string_t modKey(U("module"));
+  utility::string_t srcKey(U("source"));
+  utility::string_t cKey(U("compounding"));
+  utility::string_t ticketKey(U("create_ticket"));
+  utility::string_t descKey(U("description"));
+  utility::string_t resKey(U("resolution"));
+  utility::string_t telKey(U("telemetry"));
+
+  // Assign key-value
+  payload[agentKey] = json::value::string(U(this->agent_id));
+  payload[roboKey] = json::value::string(U(this->robot_id));
+  payload[propKey] = json::value::string(U(this->site_id));
+  payload[eventidKey] = json::value::string(U(event_id));
+  payload[timeKey] = json::value::string(U(timestr));
+  payload[msgKey] = json::value::string(U(message));
+  payload[lvlKey] = json::value::string(U(level));
+  payload[modKey] = json::value::string(U(module));
+  payload[srcKey] = json::value::string(U(source));
+  payload[cKey] = json::value::string(U(cflag));
+  payload[ticketKey] = json::value::boolean(U(ticketBool));
+  payload[descKey] = json::value::string(U(description));
+  payload[resKey] = json::value::string(U(resolution));
+  payload[telKey] = telemetry;
+
+  if (this->agent_mode == "JSON_TEST")
+  {
+    // Write the current JSON value to a stream with the native platform character width
+    utility::stringstream_t stream;
+    payload.serialize(stream);
+
+    // Display the string stream
+    // std::cout << stream.str() << std::endl;
+    std::cout << "Status Logged: " << message << std::endl;
+
+    // Write to file
+    std::ofstream outfile;
+    std::string filename = this->log_name + "Status" + this->log_ext;
+    // std::cout << filename << std::endl;
+    outfile.open(filename);
+    outfile << std::setw(4) << stream.str() << std::endl;
+    outfile.close();
+  }
+  else if (this->agent_mode == "POST_TEST")
+  {
+    // Write the current JSON value to a stream with the native platform character width
+    utility::stringstream_t stream;
+    payload.serialize(stream);
+
+    // Display the string stream
+    // std::cout << stream.str() << std::endl;
+    std::cout << "Status Logged: " << message << std::endl;
+
+    // Write to file
+    std::ofstream outfile;
+    std::string filename = this->log_name + "Status" + this->log_ext;
+    // std::cout << filename << std::endl;
+    outfile.open(filename);
+    outfile << std::setw(4) << stream.str() << std::endl;
+    outfile.close();
+
+    // Post downstream
+    this->post_event_log(payload).wait();
+  }
+}
+
 void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
 {
   // Create JSON payload and push to kinesis
@@ -270,6 +373,7 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
   std::string description = last_log[idx++];
   std::string resolution = last_log[idx++];
   std::string event_id = last_log[idx++];
+  std::string telemetry_str = last_log[idx++];
 
   bool ticketBool = false;
   if (((level == "8") || (level == "40")) && ((cflag == "false") || (cflag == "Null")))
@@ -298,6 +402,7 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
   utility::string_t ticketKey(U("create_ticket"));
   utility::string_t descKey(U("description"));
   utility::string_t resKey(U("resolution"));
+  utility::string_t telKey(U("telemetry"));
 
   // Assign key-value
   payload[agentKey] = json::value::string(U(this->agent_id));
@@ -313,17 +418,18 @@ void BackendApi::push_event_log(std::vector<std::vector<std::string>> log)
   {
     payload[cKey] = json::value::boolean(U(false));
   }
-  else if(cflag == "true")
+  else if (cflag == "true")
   {
     payload[cKey] = json::value::boolean(U(true));
   }
   else
   {
-    payload[cKey] = json::value::string(U("Null"));    
+    payload[cKey] = json::value::string(U("Null"));
   }
   payload[ticketKey] = json::value::boolean(U(ticketBool));
   payload[descKey] = json::value::string(U(description));
   payload[resKey] = json::value::string(U(resolution));
+  payload[telKey] = json::value::parse(U(telemetry_str));
 
   if (this->agent_mode == "JSON_TEST")
   {
