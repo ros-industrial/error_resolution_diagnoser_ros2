@@ -106,8 +106,8 @@ void RobotEvent::update_log(const rcl_interfaces::msg::Log::SharedPtr data, json
     event_details.push_back(message);
     event_details.push_back(description);
     event_details.push_back(resolution);
-    event_details.push_back(this->event_id_str);
     event_details.push_back(telemetry_str);
+    event_details.push_back(this->event_id_str);
 
     // Push to log
     this->event_log.push_back(event_details);
