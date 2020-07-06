@@ -23,8 +23,9 @@ def generate_test_description(ready_fn):
     proc_env['PYTHONUNBUFFERED'] = '1'
 
     listener_node = launch_ros.actions.Node(
-        package='rosrect-listener-agent',
-        node_executable='rosrect-listener-agent',
+        package='rosrect-listener-agent-ros2',
+        node_executable='rosrect-listener-agent-ros2',
+        # arguments=['__log_disable_rosout:=true'],
         env=proc_env,
     )
 
@@ -52,11 +53,13 @@ class ListenerTest(unittest.TestCase):
         cls.node = rclpy.create_node('test_node', context=cls.context)
         
         # Log file info
-        parentdir = os.path.expanduser("~")
-        parentdir = parentdir + "/.cognicept/agent/logs/latest_ros2_log.txt"
+        homevar = os.path.expanduser("~")
+        parentdir = homevar + "/.cognicept/agent/logs/latest_log_loc.txt"
         f = open(parentdir)
         latest_log_loc = f.readline()
         latest_log_loc = latest_log_loc[:-1]
+        latest_log_loc = latest_log_loc.replace("/$HOME", homevar)
+        print("Reading logs from: ", latest_log_loc)
         f.close()
         cls.logfolder = latest_log_loc
         # else:
@@ -77,6 +80,7 @@ class ListenerTest(unittest.TestCase):
 
     # Method to publish messages
     def talk(self, msg_list, sev_list, pub, msg, listener):
+        print('Talking...')
 
         # Loop through message list    
         for idx in range(len(msg_list)):
@@ -90,6 +94,7 @@ class ListenerTest(unittest.TestCase):
 
             # Set message content
             msg.msg = msg_list[idx]
+            print(msg_list[idx])
 
             # Set message severity            
             if sev_list[idx] == "E":
