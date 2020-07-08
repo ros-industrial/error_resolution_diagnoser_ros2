@@ -16,6 +16,7 @@ import rcl_interfaces.msg
 
 LOGID = 0
 os.environ['AGENT_TYPE'] = 'ROS'
+os.environ['AGENT_MODE'] = 'JSON_TEST'
 
 def generate_test_description(ready_fn):
     # Necessary to get real-time stdout from python processes but we are not using it:
@@ -25,7 +26,7 @@ def generate_test_description(ready_fn):
     listener_node = launch_ros.actions.Node(
         package='rosrect-listener-agent-ros2',
         node_executable='rosrect-listener-agent-ros2',
-        # arguments=['__log_disable_rosout:=true'],
+        arguments=['__log_disable_rosout:=true'],
         env=proc_env,
     )
 
@@ -127,11 +128,14 @@ class ListenerTest(unittest.TestCase):
         )
         self.addCleanup(self.node.destroy_publisher, pub)
 
-        # Create and publish a sample message to establish plumbing for the first time
+        # Create a sample message
         msg = rcl_interfaces.msg.Log()
         msg.msg = "Sample message to establish plumbing?"
         msg.level = 40
-        pub.publish(msg)
+        
+        # Publish a sample message to establish plumbing for the first time (only for Dashing)
+        if(os.environ['ROS_DISTRO'] == 'dashing'):
+            pub.publish(msg)
         
         # Test message list
         msg_list = [
