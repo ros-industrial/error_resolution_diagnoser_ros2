@@ -2,7 +2,8 @@ FROM ros:eloquent-ros-base
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends screen \
-    libcpprest-dev
+    libcpprest-dev \
+    ros-eloquent-launch-testing*
 
 RUN apt-get update && \
     apt-get install -y  && \
