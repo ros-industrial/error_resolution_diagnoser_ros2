@@ -149,6 +149,7 @@ Optionally, you can run the unit and integration tests natively or using Docker,
 
     Summary: 37 tests, 0 errors, 0 failures, 0 skipped
     ```
+
 ### Using Docker
 
 1. Make sure that you have built the docker image by following the steps [here](#building-through-docker).
@@ -194,6 +195,7 @@ Optionally, you can run the unit and integration tests natively or using Docker,
 
     Summary: 32 tests, 0 errors, 0 failures, 0 skipped
     ```
+
 ## Syntax
 The agent can be configured using the following environment variables:
 
@@ -239,7 +241,7 @@ In case of a Docker installation, you can simply use the [`runtime.env`](runtime
     rosrect_agent_ros2:latest  \
     ros2 launch rosrect-listener-agent-ros2 listener-agent-launch.py
 
-**This is just a syntax. We will be using this listener agent to connect to a simulation to listen to errors in the next section!**
+**NOTE: This is just a syntax. We will be using this listener agent to connect to a simulation to listen to errors in the next section!**
 
 ## Example Application
 
@@ -270,11 +272,11 @@ For the purposes of the demonstration, make sure that the robot is intentionally
 ![alt text](/docs/images/Mislocalized.png "Turtlebot mislocalized")
 
 ### Start rosrect Listener Agent
-We are ready to start listening to robot errors.  Based on your installation type, you can start the agent in one of 2 ways:
+We are ready to start listening to robot errors. Based on your installation type, you can start the agent in one of 2 ways:
 
 **Running natively**
 
-Simply launch the listener ROS 2 node using the launch file:
+Simply launch the agent ROS 2 node using the launch file:
 
     $ ros2 launch rosrect-listener-agent-ros2 listener-agent-launch.py
 
@@ -381,24 +383,23 @@ Now, use `Rviz2` to provide a `Navigation2 goal` for the robot.
 ![alt text](/docs/images/NavGoal.png "Navigation2 Goal in Rviz2")
 
 Because the robot is mislocalized, chances are high that it will be unable to reach its goal, generating an error. When that happens, the terminal window running the simulation will show something like the following:
-```
-1590486170.4089003 [bt_navigator-10] [INFO] [bt_navigator]: Begin navigating from current location to (-2.04, -1.17)
-1590486170.4169328 [navfn_planner-9] [WARN] [navfn_planner]: Planning algorithm failed to generate a valid path to (-2.04, -1.17)
-1590486171.4250529 [recoveries_node-11] [INFO] [recoveries]: Attempting Spin
-1590486171.4261382 [recoveries_node-11] [INFO] [recoveries]: Turning -1.57 for spin recovery.
-1590486172.4256592 [recoveries_node-11] [INFO] [recoveries]: Spin running...
-1590486173.4258511 [recoveries_node-11] [INFO] [recoveries]: Spin running...
-1590486173.5255470 [recoveries_node-11] [INFO] [recoveries]: Spin completed successfully
-1590486173.5320866 [navfn_planner-9] [WARN] [navfn_planner]: Planning algorithm failed to generate a valid path to (-2.04, -1.17)
-1590486173.5508025 [recoveries_node-11] [INFO] [recoveries]: Attempting Spin
-1590486173.5510445 [recoveries_node-11] [INFO] [recoveries]: Turning -1.57 for spin recovery.
-1590486174.5470121 [recoveries_node-11] [INFO] [recoveries]: Spin running...
-1590486175.4535339 [recoveries_node-11] [INFO] [recoveries]: Spin completed successfully
-1590486175.4593930 [navfn_planner-9] [WARN] [navfn_planner]: Planning algorithm failed to generate a valid path to (-2.04, -1.17)
-1590486175.4745233 [bt_navigator-10] [ERROR] [bt_navigator]: Navigation failed
-```
 
-The terminal window running the listener agent will show the following. You can compare this with the prompts above and confirm that the agent is able to receive every message (and then some, since not ALL `rosout` logs are visible on the screen). After receiving, the agent decides to create a JSON log based on suppression logic as to whether that particular log has already been seen before. If it has, it suppresses it. For e.g. log is created only for the first `Spin running...`. The subsequent ones are suppressed. Once the agent receives a `Navigation succeeded` message or message with with `ERROR` level, it resets the suppression logic and makes all logs available for reporting again. This can also be seen with the displayed `event_id` for each log reported. A message is eligible for suppression only within a particular event. And the `event_id` gets reset when the agent receives a `Navigation succeeded` message or message with with `ERROR` level. For e.g. in the scenario below, we start with `event_id` `16764a84-2441-486f-b568-524ae50856e9`. This id is maintained until the FIRST `ERROR` level message is reported. Any new messages after this will have a new `event_id`:
+    1590486170.4089003 [bt_navigator-10] [INFO] [bt_navigator]: Begin navigating from current location to (-2.04, -1.17)
+    1590486170.4169328 [navfn_planner-9] [WARN] [navfn_planner]: Planning algorithm failed to generate a valid path to (-2.04, -1.17)
+    1590486171.4250529 [recoveries_node-11] [INFO] [recoveries]: Attempting Spin
+    1590486171.4261382 [recoveries_node-11] [INFO] [recoveries]: Turning -1.57 for spin recovery.
+    1590486172.4256592 [recoveries_node-11] [INFO] [recoveries]: Spin running...
+    1590486173.4258511 [recoveries_node-11] [INFO] [recoveries]: Spin running...
+    1590486173.5255470 [recoveries_node-11] [INFO] [recoveries]: Spin completed successfully
+    1590486173.5320866 [navfn_planner-9] [WARN] [navfn_planner]: Planning algorithm failed to generate a valid path to (-2.04, -1.17)
+    1590486173.5508025 [recoveries_node-11] [INFO] [recoveries]: Attempting Spin
+    1590486173.5510445 [recoveries_node-11] [INFO] [recoveries]: Turning -1.57 for spin recovery.
+    1590486174.5470121 [recoveries_node-11] [INFO] [recoveries]: Spin running...
+    1590486175.4535339 [recoveries_node-11] [INFO] [recoveries]: Spin completed successfully
+    1590486175.4593930 [navfn_planner-9] [WARN] [navfn_planner]: Planning algorithm failed to generate a valid path to (-2.04, -1.17)
+    1590486175.4745233 [bt_navigator-10] [ERROR] [bt_navigator]: Navigation failed
+
+The terminal window running the agent will show the following. You can compare this with the prompts above and confirm that the agent is able to receive every message (and then some, since not ALL `rosout` logs are visible on the screen). After receiving, the agent decides to create a JSON log based on suppression logic as to whether that particular log has already been seen before. If it has, it suppresses it. For e.g. log is created only for the first `Spin running...`. The subsequent ones are suppressed. Once the agent receives a `Navigation succeeded` message or message with with `ERROR` level, it resets the suppression logic and makes all logs available for reporting again. This can also be seen with the displayed `event_id` for each log reported. A message is eligible for suppression only within a particular event. And the `event_id` gets reset when the agent receives a `Navigation succeeded` message or message with with `ERROR` level. For e.g. in the scenario below, we start with `event_id` `16764a84-2441-486f-b568-524ae50856e9`. This id is maintained until the FIRST `ERROR` level message is reported. Any new messages after this will have a new `event_id`:
 
     [rosrect-listener-agent-ros2-1] Message received: Begin navigating from current location to (-1.40, -0.69)
     [rosrect-listener-agent-ros2-1] 20 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
