@@ -38,57 +38,41 @@ You can get access to the agent by cloning this repo. After this, there are a co
 
 2. Change to your `src` folder of the ROS 2 workspace directory. Generally it is as follows:
 
-    ```
-    $ cd ~/ros2_ws/src
-    ```
-
+        $ cd ~/ros2_ws/src
+    
 3. Clone the repo:
 
-    ```git
-    $ git clone https://github.com/cognicept-admin/rosrect-listener-agent-ros2
-    ```
-
+        $ git clone https://github.com/cognicept-admin/rosrect-listener-agent-ros2
+    
 ### Building natively:
 
 You can use this approach if you are planning on running this on a system that has a working ROS 2 installation. Steps are as follows:
 
 1. Install Microsoft's [`C++ REST SDK`][5] for establishing the backend api for incident management using `apt-get`:
 
-    ```
-    $ sudo apt-get install libcpprest-dev
-    ```
-
+        $ sudo apt-get install libcpprest-dev
+    
 2. Install ROS 2's launch testing framework if it is not installed already using `apt-get`. Here `< ROSDISTRO >` stands for your ROS 2 distribution such as `dashing` or `eloquent`:
     
-    ```
-    $ sudo apt-get install ros-< ROSDISTRO >-launch-testing*
-    ```
-
+        $ sudo apt-get install ros-< ROSDISTRO >-launch-testing*
+    
 3. Change to your `ros2_ws` folder:
 
-    ```
-    $ cd ..
-    ``` 
-
+        $ cd ..
+     
 4. Issue `colcon build` to build the ROS node:
 
-    ```
-    $ colcon build --symlink-install
-    ```
-
+        $ colcon build --symlink-install
+    
 5. Source the changes by running the `setup.bash` file:
 
-    ```
-    $ source ~/ros2_ws/install/setup.bash
-    ```
-
+        $ source ~/ros2_ws/install/setup.bash
+    
 6. Check if node has built correctly and registered using `ros2 pkg`:
 
-    ```
-    $ ros2 pkg list | grep rosrect
-      rosrect-listener-agent-ros2
-    ```
-
+        $ ros2 pkg list | grep rosrect
+        rosrect-listener-agent-ros2
+    
 That is it for the native installation! You can now jump to [Running tests](#running-tests) or [Syntax](#syntax).
 
 ### Building through Docker:
@@ -99,10 +83,8 @@ You can use this approach if you are planning on running the agent on a system t
 
 2. You can then build the `docker` image using `docker build` and the provided `Dockerfile`:
 
-    ```
-    $ docker build -t rosrect_agent_ros2 .
-    ```
-
+        $ docker build -t rosrect_agent_ros2 .
+    
 That is it for the Docker installation! You can now jump to [Running tests](#running-tests) or [Syntax](#syntax).
 
 ## Running tests
@@ -112,43 +94,37 @@ Optionally, you can run the unit and integration tests natively or using Docker,
 
 1. Open a new terminal and switch to the `ros2_ws` directory:
 
-    ```
-    $ cd ~/ros2_ws
-    ```
-
+        $ cd ~/ros2_ws
+    
 2. Run tests using `colcon test` as shown below. Logs will be created in the `/$HOME/.cognicept/agent/logs` folder:
 
-    ```
-    $ colcon test --packages-select rosrect-listener-agent-ros2
-    Starting >>> rosrect-listener-agent-ros2
-    Finished <<< rosrect-listener-agent-ros2 [24.0s]             
+        $ colcon test --packages-select rosrect-listener-agent-ros2
+        Starting >>> rosrect-listener-agent-ros2
+        Finished <<< rosrect-listener-agent-ros2 [24.0s]             
 
-    Summary: 1 package finished [25.5s]
-    ```
-
+        Summary: 1 package finished [25.5s]
+    
 3. See the test results using `colcon test-result` as follows. Use `--verbose` option to see the test failure results, and `-all` to see all results.
     
     The following shows that no tests failed:
 
-    ```
-    $ colcon test-result --verbose
-    Summary: 37 tests, 0 errors, 0 failures, 0 skipped
-    ```
+        $ colcon test-result --verbose
+        Summary: 37 tests, 0 errors, 0 failures, 0 skipped
 
     The following shows the results no matter whether it passed or failed. Open up the individual XML files for more information:
 
-    ```
-    $ colcon test-result --all
-    build/rosrect-listener-agent-ros2/Testing/20200708-0252/Test.xml: 5 tests, 0 errors, 0 failures, 0 skipped
-    build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/backend_test_node.gtest.xml: 6 tests, 0 errors, 0 failures, 0 skipped
-    build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/robotevent_test_node.gtest.xml: 5 tests, 0 errors, 0 failures, 0 skipped
-    build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/statemanager_test_node.gtest.xml: 8 tests, 0 errors, 0 failures, 0 skipped
-    build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/test_listener_integration_launch_db_test.py.xunit.xml: 5 tests, 0 errors, 0 failures, 0 skipped
-    build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/test_listener_integration_launch_ros_test.py.xunit.xml: 3 tests, 0 errors, 0 failures, 0 skipped
-    build/rosrect-listener-agent/Testing/20200617-0728/Test.xml: 5 tests, 0 errors, 0 failures, 0 skipped
+    
+        $ colcon test-result --all
+        build/rosrect-listener-agent-ros2/Testing/20200708-0252/Test.xml: 5 tests, 0 errors, 0 failures, 0 skipped
+        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/backend_test_node.gtest.xml: 6 tests, 0 errors, 0 failures, 0 skipped
+        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/robotevent_test_node.gtest.xml: 5 tests, 0 errors, 0 failures, 0 skipped
+        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/statemanager_test_node.gtest.xml: 8 tests, 0 errors, 0 failures, 0 skipped
+        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/test_listener_integration_launch_db_test.py.xunit.xml: 5 tests, 0 errors, 0 failures, 0 skipped
+        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/test_listener_integration_launch_ros_test.py.xunit.xml: 3 tests, 0 errors, 0 failures, 0 skipped
+        build/rosrect-listener-agent/Testing/20200617-0728/Test.xml: 5 tests, 0 errors, 0 failures, 0 skipped
 
-    Summary: 37 tests, 0 errors, 0 failures, 0 skipped
-    ```
+        Summary: 37 tests, 0 errors, 0 failures, 0 skipped
+    
 
 ### Using Docker
 
@@ -156,46 +132,42 @@ Optionally, you can run the unit and integration tests natively or using Docker,
 
 2. Switch to the repository's folder or wherever you might be storing the `runtime.env` file.
 
-    ```
-    $ cd ~/ros2_ws/src/rosrect-listener-agent-ros2
-    ```
-
+        $ cd ~/ros2_ws/src/rosrect-listener-agent-ros2
+    
 3. You can run the tests by using the following `docker run` command. This will run the `buildntest.bash` script to run the tests and pull the results. Logs will be created in the `/$HOME/.cognicept/agent/logs` folder:
 
-    ```
-    $ docker run -it \
-    --env-file runtime.env \
-    --network=host \
-    --name=agent  \
-    --volume="${HOME}/.cognicept/agent/logs:/root/.cognicept/agent/logs" \
-    rosrect_agent_ros2:latest  \
-    /home/ros2_ws/src/rosrect-listener-agent-ros2/buildntest.bash
+        $ docker run -it \
+        --env-file runtime.env \
+        --network=host \
+        --name=agent  \
+        --volume="${HOME}/.cognicept/agent/logs:/root/.cognicept/agent/logs" \
+        rosrect_agent_ros2:latest  \
+        /home/ros2_ws/src/rosrect-listener-agent-ros2/buildntest.bash
+        
+        STEP 1: Building agent code...
+        Starting >>> rosrect-listener-agent-ros2
+        Finished <<< rosrect-listener-agent-ros2 [0.38s]                       
+
+        Summary: 1 package finished [0.55s]
+        /home/ros2_ws/src/rosrect-listener-agent-ros2/buildntest.bash: line 4: /root/ros2_ws/install/setup.bash: No such file or directory
+        STEP 2: Testing agent code...
+        Starting >>> rosrect-listener-agent-ros2
+        [Processing: rosrect-listener-agent-ros2]                   
+        Finished <<< rosrect-listener-agent-ros2 [36.8s]            
+
+        Summary: 1 package finished [37.0s]
+        STEP 3: Getting failures...
+        Summary: 32 tests, 0 errors, 0 failures, 0 skipped
+        STEP 4: Getting all test results...
+        build/rosrect-listener-agent-ros2/Testing/20200708-0630/Test.xml: 5 tests, 0 errors, 0 failures, 0 skipped
+        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/backend_test_node.gtest.xml: 6 tests, 0 errors, 0 failures, 0 skipped
+        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/robotevent_test_node.gtest.xml: 5 tests, 0 errors, 0 failures, 0 skipped
+        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/statemanager_test_node.gtest.xml: 8 tests, 0 errors, 0 failures, 0 skipped
+        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/test_listener_integration_launch_db_test.py.xunit.xml: 5 tests, 0 errors, 0 failures, 0 skipped
+        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/test_listener_integration_launch_ros_test.py.xunit.xml: 3 tests, 0 errors, 0 failures, 0 skipped
+
+        Summary: 32 tests, 0 errors, 0 failures, 0 skipped
     
-    STEP 1: Building agent code...
-    Starting >>> rosrect-listener-agent-ros2
-    Finished <<< rosrect-listener-agent-ros2 [0.38s]                       
-
-    Summary: 1 package finished [0.55s]
-    /home/ros2_ws/src/rosrect-listener-agent-ros2/buildntest.bash: line 4: /root/ros2_ws/install/setup.bash: No such file or directory
-    STEP 2: Testing agent code...
-    Starting >>> rosrect-listener-agent-ros2
-    [Processing: rosrect-listener-agent-ros2]                   
-    Finished <<< rosrect-listener-agent-ros2 [36.8s]            
-
-    Summary: 1 package finished [37.0s]
-    STEP 3: Getting failures...
-    Summary: 32 tests, 0 errors, 0 failures, 0 skipped
-    STEP 4: Getting all test results...
-    build/rosrect-listener-agent-ros2/Testing/20200708-0630/Test.xml: 5 tests, 0 errors, 0 failures, 0 skipped
-    build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/backend_test_node.gtest.xml: 6 tests, 0 errors, 0 failures, 0 skipped
-    build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/robotevent_test_node.gtest.xml: 5 tests, 0 errors, 0 failures, 0 skipped
-    build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/statemanager_test_node.gtest.xml: 8 tests, 0 errors, 0 failures, 0 skipped
-    build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/test_listener_integration_launch_db_test.py.xunit.xml: 5 tests, 0 errors, 0 failures, 0 skipped
-    build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/test_listener_integration_launch_ros_test.py.xunit.xml: 3 tests, 0 errors, 0 failures, 0 skipped
-
-    Summary: 32 tests, 0 errors, 0 failures, 0 skipped
-    ```
-
 ## Syntax
 The agent can be configured using the following environment variables:
 
