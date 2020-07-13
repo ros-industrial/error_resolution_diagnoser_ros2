@@ -1,8 +1,11 @@
-FROM ros:eloquent-ros-base
+FROM ros:eloquent-ros-core
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends screen \
     libcpprest-dev \
+    python3-colcon-common-extensions \
+    g++ \
+    make \
     ros-eloquent-launch-testing*
 
 RUN apt-get update && \
