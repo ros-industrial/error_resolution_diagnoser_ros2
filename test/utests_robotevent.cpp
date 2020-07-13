@@ -48,7 +48,7 @@ TEST(RobotEventTestSuite, getLogTest)
   updatedLog = event_instance.get_log();
 
   // Check if there is only one row
-  ASSERT_EQ(updatedLog.size(), 1);
+  ASSERT_EQ(updatedLog.size(), (unsigned int)1);
 
   // Check if there are correct number of elements in that one row
   int expElements = 10;
@@ -98,7 +98,7 @@ TEST(RobotEventTestSuite, updateLogROSTest)
   currentRow = updatedLog[0];
 
   // Check if content is equal
-  for (int idx = 1; idx < currentRow.size() - 2; idx++)
+  for (unsigned int idx = 1; idx < currentRow.size() - 2; idx++)
   {
     // Check everything else
     ASSERT_EQ(event_details[idx - 1], currentRow[idx]);
@@ -167,7 +167,7 @@ TEST(RobotEventTestSuite, updateLogDBTest)
   currentRow = updatedLog[0];
 
   // Check if content is equal
-  for (int idx = 1; idx < currentRow.size() - 2; idx++)
+  for (unsigned int idx = 1; idx < currentRow.size() - 2; idx++)
   {
     // Check everything else
     ASSERT_EQ(event_details[idx - 1], currentRow[idx]);

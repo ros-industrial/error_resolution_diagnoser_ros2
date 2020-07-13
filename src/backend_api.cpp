@@ -499,7 +499,7 @@ json::value BackendApi::create_event_log(std::vector<std::vector<std::string>> l
   utility::string_t srcKey(U("Source"));
 
   // std::cout << "Creating JSON log" << std::endl;
-  for (int queue_id = 0; queue_id < log.size(); queue_id++)
+  for (unsigned int queue_id = 0; queue_id < log.size(); queue_id++)
   {
 
     // Get row

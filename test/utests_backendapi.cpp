@@ -113,7 +113,7 @@ TEST(BackEndApiTestSuite, jsonTest)
   fieldNames.push_back("Source");
 
   // Loop through field names to see if they exist with the correct data type
-  for (int idx = 0; idx < fieldNames.size(); idx++)
+  for (unsigned int idx = 0; idx < fieldNames.size(); idx++)
   {
     fieldFlag = eventJson[0].has_string_field(fieldNames[idx]);
     if (fieldFlag == false)
@@ -229,7 +229,7 @@ TEST(BackEndApiTestSuite, ecsHitTest)
   fieldNames.push_back("error_resolution");
 
   // Loop through field names to see if they exist with the correct data type
-  for (int idx = 0; idx < fieldNames.size(); idx++)
+  for (unsigned int idx = 0; idx < fieldNames.size(); idx++)
   {
     if (fieldNames[idx] == "compounding_flag")
     {
