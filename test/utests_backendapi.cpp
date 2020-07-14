@@ -154,7 +154,7 @@ TEST(BackEndApiTestSuite, statusTrueTest)
   json::value status_log = json::value::parse(stream);
 
   // Create key and get value
-  utility::string_t msgKey(U("message"));
+  utility::string_t msgKey(utility::conversions::to_string_t("message"));
   std::string message_value;
   message_value = status_log[msgKey].as_string();
 
@@ -195,7 +195,7 @@ TEST(BackEndApiTestSuite, statusFalseTest)
   json::value status_log = json::value::parse(stream);
 
   // Create key and get value
-  utility::string_t msgKey(U("message"));
+  utility::string_t msgKey(utility::conversions::to_string_t("message"));
   std::string message_value;
   message_value = status_log[msgKey].as_string();
 

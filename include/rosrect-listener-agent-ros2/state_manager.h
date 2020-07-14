@@ -1,9 +1,10 @@
+#include <cpprest/json.h>
+#undef U
 #include <string>
 #include <vector>
 #include <iostream>
 #include <sstream>
 #include <ctime>
-#include <cpprest/json.h>
 #include <rcl_interfaces/msg/log.hpp>
 #include <rosrect-listener-agent-ros2/backend_api.h>
 #include <rosrect-listener-agent-ros2/robot_event.h>

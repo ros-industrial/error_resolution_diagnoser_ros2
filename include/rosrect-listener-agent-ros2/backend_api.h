@@ -1,6 +1,9 @@
 #include <cpprest/http_client.h>
 #include <cpprest/filestream.h>
 #include <cpprest/json.h>
+#include <cpprest/containerstream.h>
+#include <cpprest/producerconsumerstream.h>
+#undef U
 #include <string>
 #include <vector>
 #include <iostream>
@@ -8,9 +11,6 @@
 #include <fstream>
 #include <iomanip>
 #include <algorithm>
-#include <cpprest/containerstream.h>
-#include <cpprest/producerconsumerstream.h>
-#include <ament_index_cpp/get_package_prefix.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/uuid/uuid.hpp>            // uuid class
 #include <boost/uuid/uuid_generators.hpp> // generators
