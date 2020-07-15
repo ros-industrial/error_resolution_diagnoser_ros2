@@ -25,7 +25,7 @@ find_package(geometry_msgs REQUIRED)
 set(cpprestsdk_DIR /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/cmake/)
 find_package(OpenSSL REQUIRED)
 find_package(cpprestsdk REQUIRED)
-find_package(Boost REQUIRED COMPONENTS system filesystem thread)
+find_package(Boost REQUIRED COMPONENTS system filesystem thread date_time)
 
 include_directories(
   include
