@@ -1,6 +1,6 @@
 # rosrect Listener Agent Documentation 
 
-https://jenkins.cognicept.systems/buildStatus/icon?job=Cognicept+Agents%2Fcognicept-ros2-agent-pipeline
+[![Build Status](https://jenkins.cognicept.systems/buildStatus/icon?job=Cognicept+Agents%2Fcognicept-ros2-agent-pipeline)](https://jenkins.cognicept.systems/job/Cognicept%20Agents/job/cognicept-ros2-agent-pipeline/)
 
 Hello there! Thanks for checking out the agent documentation. This particular document is a user's guide. If you are more interested in what the agent is designed for, and the architecture, please take a look at the introduction document [here][7]!
 
