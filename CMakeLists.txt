@@ -20,10 +20,12 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rcl_interfaces REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 set(cpprestsdk_DIR /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/cmake/)
 find_package(OpenSSL REQUIRED)
 find_package(cpprestsdk REQUIRED)
-find_package(Boost REQUIRED COMPONENTS system filesystem thread)
+find_package(Boost REQUIRED COMPONENTS system filesystem thread date_time)
 
 include_directories(
   include
@@ -37,7 +39,7 @@ target_link_libraries(
   ${Boost_LIBRARIES}
 )
 
-ament_target_dependencies(rosrect-listener-agent-ros2-lib rclcpp rcl_interfaces ament_index_cpp)
+ament_target_dependencies(rosrect-listener-agent-ros2-lib rclcpp rcl_interfaces ament_index_cpp nav_msgs geometry_msgs)
 
 add_executable(rosrect-listener-agent-ros2 src/listener_agent.cpp src/backend_api.cpp src/robot_event.cpp src/state_manager.cpp)
 target_link_libraries(
@@ -46,7 +48,7 @@ target_link_libraries(
   ${Boost_LIBRARIES}
 )
 
-ament_target_dependencies(rosrect-listener-agent-ros2 rclcpp rcl_interfaces ament_index_cpp)
+ament_target_dependencies(rosrect-listener-agent-ros2 rclcpp rcl_interfaces ament_index_cpp nav_msgs geometry_msgs)
 
 install(TARGETS
    rosrect-listener-agent-ros2
@@ -80,10 +82,11 @@ if(BUILD_TESTING)
   ament_add_gtest(robotevent_test_node test/utests_robotevent.cpp)
   ament_add_gtest(statemanager_test_node test/utests_statemanager.cpp)
   add_launch_test(test/listener_integration_launch_ros_test.py)
+  # add_launch_test(test/listener_integration_launch_db_test.py)
   
-  ament_target_dependencies(backend_test_node rclcpp rcl_interfaces ament_index_cpp)
-  ament_target_dependencies(robotevent_test_node rclcpp rcl_interfaces ament_index_cpp)
-  ament_target_dependencies(statemanager_test_node rclcpp rcl_interfaces ament_index_cpp)
+  ament_target_dependencies(backend_test_node rclcpp rcl_interfaces ament_index_cpp nav_msgs geometry_msgs)
+  ament_target_dependencies(robotevent_test_node rclcpp rcl_interfaces ament_index_cpp nav_msgs geometry_msgs)
+  ament_target_dependencies(statemanager_test_node rclcpp rcl_interfaces ament_index_cpp nav_msgs geometry_msgs)
   
   target_link_libraries(backend_test_node rosrect-listener-agent-ros2-lib cpprestsdk::cpprest ${Boost_LIBRARIES})
   target_link_libraries(robotevent_test_node rosrect-listener-agent-ros2-lib cpprestsdk::cpprest ${Boost_LIBRARIES})
