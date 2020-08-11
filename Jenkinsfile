@@ -18,6 +18,10 @@ pipeline{
     stage ("--Extract test results--") {
     steps {
       echo 'extracting test results - 2'
+        sh '''
+           
+           sh ros2-test.sh
+           '''
     }
     }
   }
