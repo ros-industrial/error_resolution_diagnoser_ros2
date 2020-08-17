@@ -25,5 +25,11 @@ pipeline{
     }
     }
   }
+    post {
+  always {
+     // junit 'coverage.xml'
+      step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/ros2.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
+  }
+}
 
 }
