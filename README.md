@@ -64,7 +64,7 @@ You can use this approach if you are planning on running this on a system that h
 
         $ cd ..
      
-4. Issue `colcon build` to build the ROS node:
+4. Issue `colcon build` to build the ROS node :
 
         $ colcon build --symlink-install
     
