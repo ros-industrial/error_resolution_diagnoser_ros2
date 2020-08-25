@@ -1,6 +1,6 @@
 # rosrect Listener Agent Documentation 
 
-[![Build Status](https://jenkins.cognicept.systems/job/Cognicept%20Agents/job/cognicept-ros2-agent-pipeline/badge/icon)](https://jenkins.cognicept.systems/job/Cognicept%20Agents/job/cognicept-ros2-agent-pipeline/) 
+[![Build Status](https://jenkins.cognicept.systems/buildStatus/icon?job=Cognicept+Agents%2Fcognicept-ros2-agent-pipeline)](https://jenkins.cognicept.systems/job/Cognicept%20Agents/job/cognicept-ros2-agent-pipeline/)
 
 Hello there! Thanks for checking out the agent documentation. This particular document is a user's guide. If you are more interested in what the agent is designed for, and the architecture, please take a look at the introduction document [here][7]!
 
@@ -76,6 +76,8 @@ You can use this approach if you are planning on running this on a system that h
 
         $ ros2 pkg list | grep rosrect
         rosrect-listener-agent-ros2
+
+7. Additionally, follow the appropriate installation steps for installing the `ECS API Server` [here][8].
     
 That is it for the native installation! You can now jump to [Running tests](#running-tests) or [Syntax](#syntax).
 
@@ -88,11 +90,15 @@ You can use this approach if you are planning on running the agent on a system t
 2. You can then build the `docker` image using `docker build` and the provided `Dockerfile`:
 
         $ docker build -t rosrect_agent_ros2 .
+
+3. Additionally, follow the appropriate installation steps for installing the `ECS API Server` [here][8].
     
 That is it for the Docker installation! You can now jump to [Running tests](#running-tests) or [Syntax](#syntax).
 
 ## Running tests
 Optionally, you can run the unit and integration tests natively or using Docker, based on the installation method you chose in the previous section.
+
+**NOTE: Before running tests, makes sure the `ECS API Server` is running either natively or using Docker. Take a look at the relevant documentation [here][9]. Failure to have the API server will result in some failed tests that require connection to ECS.**
 
 ### Native
 
@@ -185,6 +191,9 @@ The agent can be configured using the following environment variables:
 | `AGENT_TYPE`      | `ROS` or `DB`              |     `ROS`      | When set to `ROS`, the agent catches ANY ROS log that is published to /rosout. When set to `DB`, logs that are only available as part of the *Error Classification System (ECS)* will be considered for reporting, to enable log suppression for particular robots/sites. The ECS should be available for communicating at the REST API endpoint configured by the `ECS_API` variable.                                                                                                                   |
 | `ECS_API`         | REST API Endpoint String   | Not applicable | If the `AGENT_TYPE` is set to `DB`, this variable MUST be configured to a valid REST API endpoint. If not specified, the agent will default back to `ROS` mode. If API endpoint is not available to connect, agent will error out.                                                                                                                                                                                                                                                                       |
 | `ECS_ROBOT_MODEL` | Valid Robot Model          | Not applicable | If the `AGENT_TYPE` is set to `DB`, this variable MUST be configured to a valid robot model. If not specified, the agent will default back to `ROS` mode. For ROS 2 navigation stack, just use `ROS2_Turtlebot3`.                                                                                                                                                                                                                                                                                             |
+
+
+**NOTE: To run the agent in the `DB` mode, `ECS API Server` should be running either natively or using Docker. Take a look at the relevant documentation [here][9]. Failure to have the API server will result in the agent not able to find a valid API endpoint and result in a `ROS ERROR`.**
 
 Based on the type of installation, you can configure these variables by different methods as follows.
 
@@ -477,6 +486,8 @@ From the echo, you are able to see that the response has the same contents as th
 ## Related Pages
 For more related information, refer to:
 
+* [ECS API Installation][8]
+* [ECS API Syntax][9]
 * [Getting Started with Navigation 2][1]
 * [Turtlebot3 installation][2]
 * [ROS 2 log message structure][3]
@@ -490,3 +501,5 @@ For more related information, refer to:
 [5]: https://github.com/microsoft/cpprestsdk
 [6]: https://docs.docker.com/engine/install/ubuntu/
 [7]: /docs/AGENT_INTRO.md
+[8]: https://github.com/cognicept-admin/rosrect-ecs-api-server#installation
+[9]: https://github.com/cognicept-admin/rosrect-ecs-api-server#syntax
