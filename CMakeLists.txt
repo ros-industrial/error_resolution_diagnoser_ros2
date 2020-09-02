@@ -83,6 +83,7 @@ if(BUILD_TESTING)
   ament_add_gtest(statemanager_test_node test/utests_statemanager.cpp)
   add_launch_test(test/listener_integration_launch_ros_test.py)
   add_launch_test(test/listener_integration_launch_db_test.py)
+  add_launch_test(test/listener_integration_launch_telemetry_test.py)
   
   ament_target_dependencies(backend_test_node rclcpp rcl_interfaces ament_index_cpp nav_msgs geometry_msgs)
   ament_target_dependencies(robotevent_test_node rclcpp rcl_interfaces ament_index_cpp nav_msgs geometry_msgs)
