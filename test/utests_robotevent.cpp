@@ -51,7 +51,7 @@ TEST(RobotEventTestSuite, getLogTest)
   ASSERT_EQ(updatedLog.size(), (unsigned int)1);
 
   // Check if there are correct number of elements in that one row
-  int expElements = 10;
+  unsigned int expElements = 10;
   currentRow = updatedLog[0];
   ASSERT_EQ(currentRow.size(), expElements);
 

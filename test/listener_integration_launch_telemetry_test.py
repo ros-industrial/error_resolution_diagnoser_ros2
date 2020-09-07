@@ -234,4 +234,4 @@ class ListenerTest(unittest.TestCase):
         # Check if timestamps are at least 15 seconds apart
         duration = timestamp2 - timestamp1
         duration_in_s = duration.total_seconds()
-        self.assertLess(15, duration_in_s)
+        self.assertLess(14, duration_in_s)
