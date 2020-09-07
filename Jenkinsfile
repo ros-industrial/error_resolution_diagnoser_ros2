@@ -19,8 +19,8 @@ pipeline{
     steps {
       echo 'extracting test results - 2'
         sh '''
-           
            ls
+           sh ros2-test.sh
            '''
     }
     }
