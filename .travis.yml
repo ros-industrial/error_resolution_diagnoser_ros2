@@ -55,8 +55,7 @@ before_script:
   - pip3 install sanic
   - pip3 install databases
   - pip3 install aiosqlite
-  - pip uninstall python-dateutil
-  - pip install python-dateutil==2.8.1
+  - pip install --upgrade python-dateutil==2.8.1
   - export ECS_API=http://0.0.0.0:8000
   - export AGENT_POST_API=https://postman-echo.com
   - export ECS_DB_LOC=rosrect-ecs-api-server/ecs.db
