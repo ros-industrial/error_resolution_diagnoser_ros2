@@ -62,4 +62,5 @@ before_script:
   - chmod +x rosrect-ecs-api-server/src/ecs_endpoint.py
   - nohup python3 rosrect-ecs-api-server/src/ecs_endpoint.py &
 script:
+  - source /opt/ros/dashing/setup.bash
   - source .industrial_ci/travis.sh
