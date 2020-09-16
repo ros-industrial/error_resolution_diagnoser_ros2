@@ -27,7 +27,8 @@ env:
    - ECS_DB_LOC=rosrect-ecs-api-server/ecs.db
   matrix:
     - USE_DEB=true  
-      ROS_DISTRO="dashing" 
+      ROS_DISTRO="dashing"
+      _EXTERNAL_REPO='github:ros-controls/control_msgs#crystal-devel' 
       ROS_REPO=ros
       ADDITIONAL_DEBS="libcpprest-dev"
 
