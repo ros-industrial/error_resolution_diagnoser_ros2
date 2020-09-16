@@ -38,6 +38,7 @@ allow_failures:
 before_install:
   #installing microsoft libcpprest dependency
   - sudo apt-get install libcpprest-dev
+  - sudo apt-get install ros-dashing-launch-testing ros-dashing-launch-testing-ament-cmake ros-dashing-launch-testing-ros
 
 install:
   - git clone https://github.com/cognicept-admin/rosrect-ecs-api-server.git  
