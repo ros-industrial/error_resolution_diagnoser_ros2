@@ -161,7 +161,7 @@ class ListenerTest(unittest.TestCase):
             message = data['message']
             create_ticket = data['create_ticket']
             telemetry = data['telemetry']
-            timestamp1 = isoparse(data['timestamp'])
+            timestamp1 = parse(data['timestamp'])
 
         # Check if message is correct
         self.assertEqual('Online', message)
@@ -218,7 +218,7 @@ class ListenerTest(unittest.TestCase):
             message = data['message']
             create_ticket = data['create_ticket']
             telemetry = data['telemetry']
-            timestamp2 = isoparse(data['timestamp'])
+            timestamp2 = parse(data['timestamp'])
 
         # Check if message is correct
         self.assertEqual('Online', message)
