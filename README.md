@@ -1,10 +1,10 @@
-# rosrect Listener Agent Documentation 
+# error_resolution_diagnoser_ros2 Documentation 
 
 [![Build Status](https://jenkins.cognicept.systems/buildStatus/icon?job=cognicept-ros2-agent-pipeline)](https://jenkins.cognicept.systems/job/cognicept-ros2-agent-pipeline/)  [![Coverage Status](http://34.87.159.179:5000/coverage/cognicept-ros2-agent-pipeline)](http://34.87.159.179:5000/coverage/cognicept-ros2-agent-pipeline)
 
-Hello there! Thanks for checking out the agent documentation. This particular document is a user's guide. If you are more interested in what the agent is designed for, and the architecture, please take a look at the introduction document [here][7]!
+Hello there! Thanks for checking out the documentation. This particular document is a user's guide. If you are more interested in what the `error_resolution_diagnoser_ros2` is designed for, and the architecture, please take a look at the introduction document [here][7]!
 
-This project adheres to the Contributor Covenant [code of conduct](https://github.com/cognicept-admin/rosrect/blob/master/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [info@cognicept.systems](mailto:info@cognicept.systems). If you are interested in contributing, please refer to the guidelines [here](https://github.com/cognicept-admin/rosrect/blob/master/CONTRIBUTING.md).  
+This project adheres to the Contributor Covenant [code of conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to [info@cognicept.systems](mailto:info@cognicept.systems). If you are interested in contributing, please refer to the guidelines [here](CONTRIBUTING.md).  
 
 - [Description](#description)
 - [Overview](#overview)
@@ -21,15 +21,15 @@ This project adheres to the Contributor Covenant [code of conduct](https://githu
 - [Example-Application](#example-application)
     * [Catching Navigation Errors from Navigation 2](#catching-navigation-errors-from-navigation-2)
     * [Start Simulation](#start-simulation)
-    * [Start rosrect Listener Agent](#start-rosrect-listener-agent)
+    * [Start error_resolution_diagnoser_ros2](#start-error_resolution_diagnoser_ros2)
     * [Generate a navigation error](#generate-a-navigation-error)
 - [Related-Pages](#related-pages)
 
 ## Description
-This article explains how to run the `rosrect Listener Agent` ROS node for ROS 2.
+This article explains how to run the `error_resolution_diagnoser_ros2` ROS node for ROS 2. For the rest of the documentation, the term `agent` will be used as a shorthand to refer to the `error_resolution_diagnoser_ros2`.
 
 ## Overview
-This article shows how to start the `rosrect Listener Agent`. By the end of this, you will be able to start the agent, run a simulation and test the listener agent to listen to navigation errors.
+This article shows how to start the `error_resolution_diagnoser_ros2`. By the end of this, you will be able to start the agent, run a simulation and test the listener agent to listen to navigation errors.
 
 ## Prerequisites
 Some knowledge of ROS 2 and robotics is necessary.
@@ -46,7 +46,7 @@ You can get access to the agent by cloning this repo. After this, there are a co
     
 3. Clone the repo:
 
-        $ git clone https://github.com/cognicept-admin/rosrect-listener-agent-ros2
+        $ git clone https://github.com/cognicept-admin/error_resolution_diagnoser_ros2
     
 ### Building natively:
 
@@ -74,8 +74,8 @@ You can use this approach if you are planning on running this on a system that h
     
 6. Check if node has built correctly and registered using `ros2 pkg`:
 
-        $ ros2 pkg list | grep rosrect
-        rosrect-listener-agent-ros2
+        $ ros2 pkg list | grep error_resolution_diagnoser_ros2
+        error_resolution_diagnoser_ros2
 
 7. Additionally, follow the appropriate installation steps for installing the `ECS API Server` [here][8].
     
@@ -89,7 +89,7 @@ You can use this approach if you are planning on running the agent on a system t
 
 2. You can then build the `docker` image using `docker build` and the provided `Dockerfile`:
 
-        $ docker build -t rosrect_agent_ros2 .
+        $ docker build -t error_resolution_diagnoser_ros2 .
 
 3. Additionally, follow the appropriate installation steps for installing the `ECS API Server` [here][8].
     
@@ -108,9 +108,9 @@ Optionally, you can run the unit and integration tests natively or using Docker,
     
 2. Run tests using `colcon test` as shown below. Logs will be created in the `/$HOME/.cognicept/agent/logs` folder:
 
-        $ colcon test --packages-select rosrect-listener-agent-ros2
-        Starting >>> rosrect-listener-agent-ros2
-        Finished <<< rosrect-listener-agent-ros2 [24.0s]             
+        $ colcon test --packages-select error_resolution_diagnoser_ros2
+        Starting >>> error_resolution_diagnoser_ros2
+        Finished <<< error_resolution_diagnoser_ros2 [24.0s]             
 
         Summary: 1 package finished [25.5s]
     
@@ -125,13 +125,13 @@ Optionally, you can run the unit and integration tests natively or using Docker,
 
     
         $ colcon test-result --all
-        build/rosrect-listener-agent-ros2/Testing/20200708-0252/Test.xml: 5 tests, 0 errors, 0 failures, 0 skipped
-        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/backend_test_node.gtest.xml: 6 tests, 0 errors, 0 failures, 0 skipped
-        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/robotevent_test_node.gtest.xml: 5 tests, 0 errors, 0 failures, 0 skipped
-        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/statemanager_test_node.gtest.xml: 8 tests, 0 errors, 0 failures, 0 skipped
-        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/test_listener_integration_launch_db_test.py.xunit.xml: 5 tests, 0 errors, 0 failures, 0 skipped
-        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/test_listener_integration_launch_ros_test.py.xunit.xml: 3 tests, 0 errors, 0 failures, 0 skipped
-        build/rosrect-listener-agent/Testing/20200617-0728/Test.xml: 5 tests, 0 errors, 0 failures, 0 skipped
+        build/error_resolution_diagnoser_ros2/Testing/20200708-0252/Test.xml: 5 tests, 0 errors, 0 failures, 0 skipped
+        build/error_resolution_diagnoser_ros2/test_results/error_resolution_diagnoser_ros2/backend_test_node.gtest.xml: 6 tests, 0 errors, 0 failures, 0 skipped
+        build/error_resolution_diagnoser_ros2/test_results/error_resolution_diagnoser_ros2/robotevent_test_node.gtest.xml: 5 tests, 0 errors, 0 failures, 0 skipped
+        build/error_resolution_diagnoser_ros2/test_results/error_resolution_diagnoser_ros2/statemanager_test_node.gtest.xml: 8 tests, 0 errors, 0 failures, 0 skipped
+        build/error_resolution_diagnoser_ros2/test_results/error_resolution_diagnoser_ros2/test_listener_integration_launch_db_test.py.xunit.xml: 5 tests, 0 errors, 0 failures, 0 skipped
+        build/error_resolution_diagnoser_ros2/test_results/error_resolution_diagnoser_ros2/test_listener_integration_launch_ros_test.py.xunit.xml: 3 tests, 0 errors, 0 failures, 0 skipped
+        build/error_resolution_diagnoser_ros2/Testing/20200617-0728/Test.xml: 5 tests, 0 errors, 0 failures, 0 skipped
 
         Summary: 37 tests, 0 errors, 0 failures, 0 skipped
     
@@ -142,7 +142,7 @@ Optionally, you can run the unit and integration tests natively or using Docker,
 
 2. Switch to the repository's folder or wherever you might be storing the `runtime.env` file.
 
-        $ cd ~/ros2_ws/src/rosrect-listener-agent-ros2
+        $ cd ~/ros2_ws/src/error_resolution_diagnoser_ros2
     
 3. You can run the tests by using the following `docker run` command. This will run the `buildntest.bash` script to run the tests and pull the results. Logs will be created in the `/$HOME/.cognicept/agent/logs` folder:
 
@@ -151,30 +151,30 @@ Optionally, you can run the unit and integration tests natively or using Docker,
         --network=host \
         --name=agent  \
         --volume="${HOME}/.cognicept/agent/logs:/root/.cognicept/agent/logs" \
-        rosrect_agent_ros2:latest  \
-        /home/ros2_ws/src/rosrect-listener-agent-ros2/buildntest.bash
+        error_resolution_diagnoser_ros2:latest  \
+        /home/ros2_ws/src/error_resolution_diagnoser_ros2/buildntest.bash
         
         STEP 1: Building agent code...
-        Starting >>> rosrect-listener-agent-ros2
-        Finished <<< rosrect-listener-agent-ros2 [0.38s]                       
+        Starting >>> error_resolution_diagnoser_ros2
+        Finished <<< error_resolution_diagnoser_ros2 [0.38s]                       
 
         Summary: 1 package finished [0.55s]
-        /home/ros2_ws/src/rosrect-listener-agent-ros2/buildntest.bash: line 4: /root/ros2_ws/install/setup.bash: No such file or directory
+        /home/ros2_ws/src/error_resolution_diagnoser_ros2/buildntest.bash: line 4: /root/ros2_ws/install/setup.bash: No such file or directory
         STEP 2: Testing agent code...
-        Starting >>> rosrect-listener-agent-ros2
-        [Processing: rosrect-listener-agent-ros2]                   
-        Finished <<< rosrect-listener-agent-ros2 [36.8s]            
+        Starting >>> error_resolution_diagnoser_ros2
+        [Processing: error_resolution_diagnoser_ros2]                   
+        Finished <<< error_resolution_diagnoser_ros2 [36.8s]            
 
         Summary: 1 package finished [37.0s]
         STEP 3: Getting failures...
         Summary: 32 tests, 0 errors, 0 failures, 0 skipped
         STEP 4: Getting all test results...
-        build/rosrect-listener-agent-ros2/Testing/20200708-0630/Test.xml: 5 tests, 0 errors, 0 failures, 0 skipped
-        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/backend_test_node.gtest.xml: 6 tests, 0 errors, 0 failures, 0 skipped
-        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/robotevent_test_node.gtest.xml: 5 tests, 0 errors, 0 failures, 0 skipped
-        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/statemanager_test_node.gtest.xml: 8 tests, 0 errors, 0 failures, 0 skipped
-        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/test_listener_integration_launch_db_test.py.xunit.xml: 5 tests, 0 errors, 0 failures, 0 skipped
-        build/rosrect-listener-agent-ros2/test_results/rosrect-listener-agent-ros2/test_listener_integration_launch_ros_test.py.xunit.xml: 3 tests, 0 errors, 0 failures, 0 skipped
+        build/error_resolution_diagnoser_ros2/Testing/20200708-0630/Test.xml: 5 tests, 0 errors, 0 failures, 0 skipped
+        build/error_resolution_diagnoser_ros2/test_results/error_resolution_diagnoser_ros2/backend_test_node.gtest.xml: 6 tests, 0 errors, 0 failures, 0 skipped
+        build/error_resolution_diagnoser_ros2/test_results/error_resolution_diagnoser_ros2/robotevent_test_node.gtest.xml: 5 tests, 0 errors, 0 failures, 0 skipped
+        build/error_resolution_diagnoser_ros2/test_results/error_resolution_diagnoser_ros2/statemanager_test_node.gtest.xml: 8 tests, 0 errors, 0 failures, 0 skipped
+        build/error_resolution_diagnoser_ros2/test_results/error_resolution_diagnoser_ros2/test_listener_integration_launch_db_test.py.xunit.xml: 5 tests, 0 errors, 0 failures, 0 skipped
+        build/error_resolution_diagnoser_ros2/test_results/error_resolution_diagnoser_ros2/test_listener_integration_launch_ros_test.py.xunit.xml: 3 tests, 0 errors, 0 failures, 0 skipped
 
         Summary: 32 tests, 0 errors, 0 failures, 0 skipped
     
@@ -211,7 +211,7 @@ In case of a native installation, you can create them using the `export` command
 
 Now, you can run the listener agent using the provided launch file and `ros2 launch`:
 
-    $ ros2 launch rosrect-listener-agent-ros2 listener-agent-launch.py
+    $ ros2 launch error_resolution_diagnoser_ros2 error_resolution_diagnoser_ros2_launch.py
 
 **This is just a syntax. We will be using this listener agent to connect to a simulation to listen to errors in the next section!**
 
@@ -223,8 +223,8 @@ In case of a Docker installation, you can simply use the [`runtime.env`](runtime
     --network=host \
     --name=agent  \
     --volume="${HOME}/.cognicept/agent/logs:/root/.cognicept/agent/logs" \
-    rosrect_agent_ros2:latest  \
-    ros2 launch rosrect-listener-agent-ros2 listener-agent-launch.py
+    error_resolution_diagnoser_ros2:latest  \
+    ros2 launch error_resolution_diagnoser_ros2 error_resolution_diagnoser_ros2_launch.py
 
 **NOTE: This is just a syntax. We will be using this listener agent to connect to a simulation to listen to errors in the next section!**
 
@@ -256,14 +256,14 @@ For the purposes of the demonstration, make sure that the robot is intentionally
 
 ![alt text](/docs/images/Mislocalized.png "Turtlebot mislocalized")
 
-### Start rosrect Listener Agent
+### Start error_resolution_diagnoser_ros2
 We are ready to start listening to robot errors. Based on your installation type, you can start the agent in one of 2 ways:
 
 **Running natively**
 
 Simply launch the agent ROS 2 node using the launch file:
 
-    $ ros2 launch rosrect-listener-agent-ros2 listener-agent-launch.py
+    $ ros2 launch error_resolution_diagnoser_ros2 error_resolution_diagnoser_ros2_launch.py
 
 **Running using Docker**
 
@@ -274,44 +274,44 @@ Run the following `docker run` command:
     --network=host \
     --name=agent  \
     --volume="${HOME}/.cognicept/agent/logs:/root/.cognicept/agent/logs" \
-    rosrect_agent:latest  \
-    ros2 launch rosrect-listener-agent-ros2 listener-agent-launch.py
+    error_resolution_diagnoser_ros2:latest  \
+    ros2 launch error_resolution_diagnoser_ros2 error_resolution_diagnoser_ros2_launch.py
 
  Apart from a few small differences, the agent prompts would look similar for both the types of launches. Sample is shown below:
 
     [INFO] [launch]: All log files can be found below /home/swaroophs/.ros/log/2020-07-08-15-03-10-766217-swarooph-xps-16391
     [INFO] [launch]: Default logging verbosity is set to INFO
-    [INFO] [rosrect-listener-agent-ros2-1]: process started with pid [16523]
-    [rosrect-listener-agent-ros2-1] =======================Environment variables setup======================
-    [rosrect-listener-agent-ros2-1] =========================================================================
-    [rosrect-listener-agent-ros2-1] Environment variable AGENT_TYPE unspecified. Defaulting to ROS mode...
-    [rosrect-listener-agent-ros2-1] Environment variable ROBOT_CODE unspecified. Defaulting to 'Undefined'...
-    [rosrect-listener-agent-ros2-1] Environment variable SITE_CODE unspecified. Defaulting to 'Undefined'...
-    [rosrect-listener-agent-ros2-1] Environment variable AGENT_ID unspecified. Defaulting to 'Undefined'...
-    [rosrect-listener-agent-ros2-1] Environment variable AGENT_MODE unspecified. Defaulting to 'JSON_TEST'...
-    [rosrect-listener-agent-ros2-1] Agent log directory created: /$HOME/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6
-    [rosrect-listener-agent-ros2-1] Updated latest log location in: /$HOME/.cognicept/agent/logs/latest_log_loc.txt
-    [rosrect-listener-agent-ros2-1] TEST mode is ON. JSON Logs will be saved here: /$HOME/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6
-    [rosrect-listener-agent-ros2-1] Subscribed to Listener Agent with direct rosout...
-    [rosrect-listener-agent-ros2-1] Status Logged: Online
-    [rosrect-listener-agent-ros2-1] Status Logged: Online
-    [rosrect-listener-agent-ros2-1] Status Logged: Online
-    [rosrect-listener-agent-ros2-1] Status Logged: Online
+    [INFO] [error_resolution_diagnoser_ros2-1]: process started with pid [16523]
+    [error_resolution_diagnoser_ros2-1] =======================Environment variables setup======================
+    [error_resolution_diagnoser_ros2-1] =========================================================================
+    [error_resolution_diagnoser_ros2-1] Environment variable AGENT_TYPE unspecified. Defaulting to ROS mode...
+    [error_resolution_diagnoser_ros2-1] Environment variable ROBOT_CODE unspecified. Defaulting to 'Undefined'...
+    [error_resolution_diagnoser_ros2-1] Environment variable SITE_CODE unspecified. Defaulting to 'Undefined'...
+    [error_resolution_diagnoser_ros2-1] Environment variable AGENT_ID unspecified. Defaulting to 'Undefined'...
+    [error_resolution_diagnoser_ros2-1] Environment variable AGENT_MODE unspecified. Defaulting to 'JSON_TEST'...
+    [error_resolution_diagnoser_ros2-1] Agent log directory created: /$HOME/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6
+    [error_resolution_diagnoser_ros2-1] Updated latest log location in: /$HOME/.cognicept/agent/logs/latest_log_loc.txt
+    [error_resolution_diagnoser_ros2-1] TEST mode is ON. JSON Logs will be saved here: /$HOME/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6
+    [error_resolution_diagnoser_ros2-1] Subscribed to Listener Agent with direct rosout...
+    [error_resolution_diagnoser_ros2-1] Status Logged: Online
+    [error_resolution_diagnoser_ros2-1] Status Logged: Online
+    [error_resolution_diagnoser_ros2-1] Status Logged: Online
+    [error_resolution_diagnoser_ros2-1] Status Logged: Online
 
 Let's unpack what we see on the prompts here. First, we see the `Environment variables setup` section. Here, you can confirm the values of all the environment variables. It will also show if the agent is expecting a particular variable but it was not defined so a default value has been chosen. In our case, none of these variables have been explicitly defined, so the default values are used.
 
 Next, we see the following part:
 
-    [rosrect-listener-agent-ros2-1] Agent log directory created: /$HOME/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6
-    [rosrect-listener-agent-ros2-1] Updated latest log location in: /$HOME/.cognicept/agent/logs/latest_log_loc.txt
-    [rosrect-listener-agent-ros2-1] TEST mode is ON. JSON Logs will be saved here: /$HOME/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6
-    [rosrect-listener-agent-ros2-1] Subscribed to Listener Agent with direct rosout...
+    [error_resolution_diagnoser_ros2-1] Agent log directory created: /$HOME/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6
+    [error_resolution_diagnoser_ros2-1] Updated latest log location in: /$HOME/.cognicept/agent/logs/latest_log_loc.txt
+    [error_resolution_diagnoser_ros2-1] TEST mode is ON. JSON Logs will be saved here: /$HOME/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6
+    [error_resolution_diagnoser_ros2-1] Subscribed to Listener Agent with direct rosout...
 
 The agent will automatically create a unique `run_id` and then use it to create a folder under `$HOME/.cognicept/agent/logs/run_id` if one does not exist already. This will be where all the logs during a particular session will be stored. This location is also by default stored in a text file `$HOME/.cognicept/agent/logs/latest_log_loc.txt` so that non-ROS based systems can have easy access to the current logs. 
 
 Next, we see the following:
 
-    [rosrect-listener-agent-ros2-1] Status Logged: Online
+    [error_resolution_diagnoser_ros2-1] Status Logged: Online
 
 The agent not only reports ROS logs such as ERROR, WARN and INFO but also generates *heartbeat* or *status* logs periodically which can be used to ascertain if an agent is "Online" or "Offline". This periodic status is updated every **15 seconds** (not tunable). The physical location of the log can be found at `$HOME/.cognicept/agent/logs/run_id/logDataStatus.json`. For e.g. a sample heartbeat log for Online status is shown below. The `telemetry` field has information from `/amcl_pose` and `/odom` topics if those topics are available. Note also that the timestamp is in `UTC`:
 
@@ -360,7 +360,7 @@ The agent not only reports ROS logs such as ERROR, WARN and INFO but also genera
     "timestamp": "2020-07-08T07:38:57.474978"
 }
 ```
-If you keep the agent running, you should be able to see the `[rosrect-listener-agent-ros2-1] Status Logged: Online` prompt a few more times, once every 15 seconds.
+If you keep the agent running, you should be able to see the `[error_resolution_diagnoser_ros2-1] Status Logged: Online` prompt a few more times, once every 15 seconds.
 
 ### Generate a navigation error
 Now, use `Rviz2` to provide a `Navigation2 goal` for the robot. 
@@ -386,41 +386,41 @@ Because the robot is mislocalized, chances are high that it will be unable to re
 
 The terminal window running the agent will show the following. You can compare this with the prompts above and confirm that the agent is able to receive every message (and then some, since not ALL `rosout` logs are visible on the screen). After receiving, the agent decides to create a JSON log based on suppression logic as to whether that particular log has already been seen before. If it has, it suppresses it. For e.g. log is created only for the first `Spin running...`. The subsequent ones are suppressed. Once the agent receives a `Navigation succeeded` message or message with with `ERROR` level, it resets the suppression logic and makes all logs available for reporting again. This can also be seen with the displayed `event_id` for each log reported. A message is eligible for suppression only within a particular event. And the `event_id` gets reset when the agent receives a `Navigation succeeded` message or message with with `ERROR` level. For e.g. in the scenario below, we start with `event_id` `16764a84-2441-486f-b568-524ae50856e9`. This id is maintained until the FIRST `ERROR` level message is reported. Any new messages after this will have a new `event_id`:
 
-    [rosrect-listener-agent-ros2-1] Message received: Begin navigating from current location to (-1.40, -0.69)
-    [rosrect-listener-agent-ros2-1] 20 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
-    [rosrect-listener-agent-ros2-1] /home/swaroophs/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6/logData1.json
-    [rosrect-listener-agent-ros2-1] Message received: Planning algorithm failed to generate a valid path to (-1.40, -0.69)
-    [rosrect-listener-agent-ros2-1] 30 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
-    [rosrect-listener-agent-ros2-1] /home/swaroophs/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6/logData2.json
-    [rosrect-listener-agent-ros2-1] Message received: Attempting Spin
-    [rosrect-listener-agent-ros2-1] 20 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
-    [rosrect-listener-agent-ros2-1] /home/swaroophs/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6/logData3.json
-    [rosrect-listener-agent-ros2-1] Message received: Turning -1.57 for spin recovery.
-    [rosrect-listener-agent-ros2-1] 20 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
-    [rosrect-listener-agent-ros2-1] /home/swaroophs/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6/logData4.json
-    [rosrect-listener-agent-ros2-1] Message received: Spin running...
-    [rosrect-listener-agent-ros2-1] 20 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
-    [rosrect-listener-agent-ros2-1] /home/swaroophs/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6/logData5.json
-    [rosrect-listener-agent-ros2-1] Status Logged: Online
-    [rosrect-listener-agent-ros2-1] Message received: Spin running...
-    [rosrect-listener-agent-ros2-1] Message received: Spin completed successfully
-    [rosrect-listener-agent-ros2-1] 20 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
-    [rosrect-listener-agent-ros2-1] /home/swaroophs/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6/logData6.json
-    [rosrect-listener-agent-ros2-1] Message received: Received a goal, begin following path
-    [rosrect-listener-agent-ros2-1] 20 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
-    [rosrect-listener-agent-ros2-1] /home/swaroophs/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6/logData7.json
-    [rosrect-listener-agent-ros2-1] Message received: Planning algorithm failed to generate a valid path to (-1.40, -0.69)
-    [rosrect-listener-agent-ros2-1] Message received: Attempting Spin
-    [rosrect-listener-agent-ros2-1] Message received: Turning -1.57 for spin recovery.
-    [rosrect-listener-agent-ros2-1] Message received: Goal was canceled. Stopping the robot.
-    [rosrect-listener-agent-ros2-1] 20 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
-    [rosrect-listener-agent-ros2-1] /home/swaroophs/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6/logData8.json
-    [rosrect-listener-agent-ros2-1] Message received: Spin running...
-    [rosrect-listener-agent-ros2-1] Message received: Spin completed successfully
-    [rosrect-listener-agent-ros2-1] Message received: Planning algorithm failed to generate a valid path to (-1.40, -0.69)
-    [rosrect-listener-agent-ros2-1] Message received: Navigation failed
-    [rosrect-listener-agent-ros2-1] 40 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
-    [rosrect-listener-agent-ros2-1] /home/swaroophs/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6/logData9.json
+    [error_resolution_diagnoser_ros2-1] Message received: Begin navigating from current location to (-1.40, -0.69)
+    [error_resolution_diagnoser_ros2-1] 20 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
+    [error_resolution_diagnoser_ros2-1] /home/swaroophs/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6/logData1.json
+    [error_resolution_diagnoser_ros2-1] Message received: Planning algorithm failed to generate a valid path to (-1.40, -0.69)
+    [error_resolution_diagnoser_ros2-1] 30 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
+    [error_resolution_diagnoser_ros2-1] /home/swaroophs/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6/logData2.json
+    [error_resolution_diagnoser_ros2-1] Message received: Attempting Spin
+    [error_resolution_diagnoser_ros2-1] 20 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
+    [error_resolution_diagnoser_ros2-1] /home/swaroophs/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6/logData3.json
+    [error_resolution_diagnoser_ros2-1] Message received: Turning -1.57 for spin recovery.
+    [error_resolution_diagnoser_ros2-1] 20 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
+    [error_resolution_diagnoser_ros2-1] /home/swaroophs/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6/logData4.json
+    [error_resolution_diagnoser_ros2-1] Message received: Spin running...
+    [error_resolution_diagnoser_ros2-1] 20 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
+    [error_resolution_diagnoser_ros2-1] /home/swaroophs/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6/logData5.json
+    [error_resolution_diagnoser_ros2-1] Status Logged: Online
+    [error_resolution_diagnoser_ros2-1] Message received: Spin running...
+    [error_resolution_diagnoser_ros2-1] Message received: Spin completed successfully
+    [error_resolution_diagnoser_ros2-1] 20 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
+    [error_resolution_diagnoser_ros2-1] /home/swaroophs/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6/logData6.json
+    [error_resolution_diagnoser_ros2-1] Message received: Received a goal, begin following path
+    [error_resolution_diagnoser_ros2-1] 20 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
+    [error_resolution_diagnoser_ros2-1] /home/swaroophs/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6/logData7.json
+    [error_resolution_diagnoser_ros2-1] Message received: Planning algorithm failed to generate a valid path to (-1.40, -0.69)
+    [error_resolution_diagnoser_ros2-1] Message received: Attempting Spin
+    [error_resolution_diagnoser_ros2-1] Message received: Turning -1.57 for spin recovery.
+    [error_resolution_diagnoser_ros2-1] Message received: Goal was canceled. Stopping the robot.
+    [error_resolution_diagnoser_ros2-1] 20 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
+    [error_resolution_diagnoser_ros2-1] /home/swaroophs/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6/logData8.json
+    [error_resolution_diagnoser_ros2-1] Message received: Spin running...
+    [error_resolution_diagnoser_ros2-1] Message received: Spin completed successfully
+    [error_resolution_diagnoser_ros2-1] Message received: Planning algorithm failed to generate a valid path to (-1.40, -0.69)
+    [error_resolution_diagnoser_ros2-1] Message received: Navigation failed
+    [error_resolution_diagnoser_ros2-1] 40 level event logged with id: 16764a84-2441-486f-b568-524ae50856e9
+    [error_resolution_diagnoser_ros2-1] /home/swaroophs/.cognicept/agent/logs/66512152-c2af-4384-ba69-47f425ed54a6/logData9.json
 
 **NOTE: `Status Logged: Online` is still being logged concurrently to relay the heartbeat/status.**
 
@@ -476,10 +476,10 @@ The `description`, `resolution` and `compounding` fields will be populated only 
 
 These JSON logs can be consumed by REST APIs/data streams to connect to incident management/monitoring systems to keep track of robot errors. To showcase this feature, let's use a sample REST API endpoint. Set the `AGENT_POST_API` variable to `https://postman-echo.com`. This is a test API where we can POST our JSON and receive a response for the POST request. Now when you re-run the agent, you will be able to see something similar to the following:
 
-    [rosrect-listener-agent-ros2-1] Status Logged: Online
-    [rosrect-listener-agent-ros2-1] Posting
-    [rosrect-listener-agent-ros2-1] Pushing downstream...
-    [rosrect-listener-agent-ros2-1] Response: {"args":{},"data":{"agent_id":"Undefined","compounding":"Null","create_ticket":false,"description":"Null","event_id":"Null","level":"Heartbeat","message":"Online","module":"Status","property_id":"Undefined","resolution":"Null","robot_id":"Undefined","source":"Null","telemetry":null,"timestamp":"2020-07-08T08:29:19.986835"},"files":{},"form":{},"headers":{"x-forwarded-proto":"https","x-forwarded-port":"443","host":"postman-echo.com","x-amzn-trace-id":"Root=1-5f0583e0-3518430c3f14972caa50ea40","content-length":"387","content-type":"application/json","user-agent":"cpprestsdk/2.10.2"},"json":{"agent_id":"Undefined","compounding":"Null","create_ticket":false,"description":"Null","event_id":"Null","level":"Heartbeat","message":"Online","module":"Status","property_id":"Undefined","resolution":"Null","robot_id":"Undefined","source":"Null","telemetry":null,"timestamp":"2020-07-08T08:29:19.986835"},"url":"https://postman-echo.com/post"}
+    [error_resolution_diagnoser_ros2-1] Status Logged: Online
+    [error_resolution_diagnoser_ros2-1] Posting
+    [error_resolution_diagnoser_ros2-1] Pushing downstream...
+    [error_resolution_diagnoser_ros2-1] Response: {"args":{},"data":{"agent_id":"Undefined","compounding":"Null","create_ticket":false,"description":"Null","event_id":"Null","level":"Heartbeat","message":"Online","module":"Status","property_id":"Undefined","resolution":"Null","robot_id":"Undefined","source":"Null","telemetry":null,"timestamp":"2020-07-08T08:29:19.986835"},"files":{},"form":{},"headers":{"x-forwarded-proto":"https","x-forwarded-port":"443","host":"postman-echo.com","x-amzn-trace-id":"Root=1-5f0583e0-3518430c3f14972caa50ea40","content-length":"387","content-type":"application/json","user-agent":"cpprestsdk/2.10.2"},"json":{"agent_id":"Undefined","compounding":"Null","create_ticket":false,"description":"Null","event_id":"Null","level":"Heartbeat","message":"Online","module":"Status","property_id":"Undefined","resolution":"Null","robot_id":"Undefined","source":"Null","telemetry":null,"timestamp":"2020-07-08T08:29:19.986835"},"url":"https://postman-echo.com/post"}
 
 From the echo, you are able to see that the response has the same contents as the JSON logs generated. Configure this endpoint appropriately to directly connect the agent to other systems such as incident management. Now, operators can monitor this incident management system to intervene robot operations to correct the errors to reduce downtime on the actual field.
 
@@ -493,13 +493,18 @@ For more related information, refer to:
 * [ROS 2 log message structure][3]
 * [Microsoft C++ REST SDK][5]
 * [Docker Installation][6]
-* [Agent Intro Document][7]
+* [Intro Document][7]
 
 [1]: https://navigation.ros.org/getting_started/index.html
 [2]: https://navigation.ros.org/getting_started/index.html#installation
 [3]: https://github.com/ros2/rcl_interfaces/blob/master/rcl_interfaces/msg/Log.msg
 [5]: https://github.com/microsoft/cpprestsdk
 [6]: https://docs.docker.com/engine/install/ubuntu/
-[7]: /docs/AGENT_INTRO.md
-[8]: https://github.com/cognicept-admin/rosrect-ecs-api-server#installation
-[9]: https://github.com/cognicept-admin/rosrect-ecs-api-server#syntax
+[7]: docs/INTRO.md
+[8]: https://github.com/cognicept-admin/error_classification_server#installation
+[9]: https://github.com/cognicept-admin/error_classification_server#syntax
+
+## Acknowledgements
+We would like to acknowledge the Singapore government for their vision and support to start this ambitious research and development project, *"Accelerating Open Source Technologies for Cross Domain Adoption through the Robot Operating System"*. The project is supported by Singapore National Robotics Programme (NRP).
+
+Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not reflect the views of the NR2PO.

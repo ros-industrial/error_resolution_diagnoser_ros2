@@ -6,8 +6,8 @@
 #include <sstream>
 #include <ctime>
 #include <rcl_interfaces/msg/log.hpp>
-#include <rosrect-listener-agent-ros2/backend_api.h>
-#include <rosrect-listener-agent-ros2/robot_event.h>
+#include <error_resolution_diagnoser_ros2/backend_api.h>
+#include <error_resolution_diagnoser_ros2/robot_event.h>
 
 class StateManager
 {
