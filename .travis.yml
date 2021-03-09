@@ -5,7 +5,7 @@ services:
 language: generic
 branches:
   only:
-  - travis-ci
+  - master
 
 cache:
   directories:
