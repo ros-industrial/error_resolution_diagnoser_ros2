@@ -27,8 +27,8 @@ def generate_test_description(ready_fn):
     proc_env['PYTHONUNBUFFERED'] = '1'
 
     listener_node = launch_ros.actions.Node(
-        package='rosrect-listener-agent-ros2',
-        node_executable='rosrect-listener-agent-ros2',
+        package='error_resolution_diagnoser_ros2',
+        node_executable='error_resolution_diagnoser_ros2',
         arguments=['__log_disable_rosout:=true'],
         env=proc_env,
     )
@@ -161,7 +161,7 @@ class ListenerTest(unittest.TestCase):
             message = data['message']
             create_ticket = data['create_ticket']
             telemetry = data['telemetry']
-            timestamp1 = isoparse(data['timestamp'])
+            timestamp1 = parse(data['timestamp'])
 
         # Check if message is correct
         self.assertEqual('Online', message)
@@ -218,7 +218,7 @@ class ListenerTest(unittest.TestCase):
             message = data['message']
             create_ticket = data['create_ticket']
             telemetry = data['telemetry']
-            timestamp2 = isoparse(data['timestamp'])
+            timestamp2 = parse(data['timestamp'])
 
         # Check if message is correct
         self.assertEqual('Online', message)

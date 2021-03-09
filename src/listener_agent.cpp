@@ -1,11 +1,11 @@
-#include <rosrect-listener-agent-ros2/listener_agent.h>
+#include <error_resolution_diagnoser_ros2/listener_agent.h>
 using std::placeholders::_1;
 using namespace std::chrono_literals;
 using namespace web::json; // JSON features
 using namespace web;       // Common features like URIs.
 
 cs_listener::cs_listener() 
-: Node("rosrect_listener_agent_ros2_node")
+: Node("error_resolution_diagnoser_ros2")
 {
   // Constructor
 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(rosrect-listener-agent-ros2)
+project(error_resolution_diagnoser_ros2)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -32,31 +32,31 @@ include_directories(
   ${Boost_INCLUDE_DIRS}
 )
 
-add_library(rosrect-listener-agent-ros2-lib src/listener_agent.cpp src/backend_api.cpp src/robot_event.cpp src/state_manager.cpp)
+add_library(error_resolution_diagnoser_ros2_lib src/listener_agent.cpp src/backend_api.cpp src/robot_event.cpp src/state_manager.cpp)
 target_link_libraries(
-  rosrect-listener-agent-ros2-lib
+  error_resolution_diagnoser_ros2_lib
   cpprestsdk::cpprest
   ${Boost_LIBRARIES}
 )
 
-ament_target_dependencies(rosrect-listener-agent-ros2-lib rclcpp rcl_interfaces ament_index_cpp nav_msgs geometry_msgs)
+ament_target_dependencies(error_resolution_diagnoser_ros2_lib rclcpp rcl_interfaces ament_index_cpp nav_msgs geometry_msgs)
 
-add_executable(rosrect-listener-agent-ros2 src/listener_agent.cpp src/backend_api.cpp src/robot_event.cpp src/state_manager.cpp)
+add_executable(error_resolution_diagnoser_ros2 src/listener_agent.cpp src/backend_api.cpp src/robot_event.cpp src/state_manager.cpp)
 target_link_libraries(
-  rosrect-listener-agent-ros2
+  error_resolution_diagnoser_ros2
   cpprestsdk::cpprest
   ${Boost_LIBRARIES}
 )
 
-ament_target_dependencies(rosrect-listener-agent-ros2 rclcpp rcl_interfaces ament_index_cpp nav_msgs geometry_msgs)
+ament_target_dependencies(error_resolution_diagnoser_ros2 rclcpp rcl_interfaces ament_index_cpp nav_msgs geometry_msgs)
 
 install(TARGETS
-   rosrect-listener-agent-ros2
+   error_resolution_diagnoser_ros2
    DESTINATION lib/${PROJECT_NAME}
 )
 
 install(TARGETS
-   rosrect-listener-agent-ros2-lib
+   error_resolution_diagnoser_ros2_lib
    DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -82,16 +82,16 @@ if(BUILD_TESTING)
   ament_add_gtest(robotevent_test_node test/utests_robotevent.cpp)
   ament_add_gtest(statemanager_test_node test/utests_statemanager.cpp)
   add_launch_test(test/listener_integration_launch_ros_test.py)
-  add_launch_test(test/listener_integration_launch_db_test.py)
+  #add_launch_test(test/listener_integration_launch_db_test.py)
   add_launch_test(test/listener_integration_launch_telemetry_test.py)
   
   ament_target_dependencies(backend_test_node rclcpp rcl_interfaces ament_index_cpp nav_msgs geometry_msgs)
   ament_target_dependencies(robotevent_test_node rclcpp rcl_interfaces ament_index_cpp nav_msgs geometry_msgs)
   ament_target_dependencies(statemanager_test_node rclcpp rcl_interfaces ament_index_cpp nav_msgs geometry_msgs)
   
-  target_link_libraries(backend_test_node rosrect-listener-agent-ros2-lib cpprestsdk::cpprest ${Boost_LIBRARIES})
-  target_link_libraries(robotevent_test_node rosrect-listener-agent-ros2-lib cpprestsdk::cpprest ${Boost_LIBRARIES})
-  target_link_libraries(statemanager_test_node rosrect-listener-agent-ros2-lib cpprestsdk::cpprest ${Boost_LIBRARIES})
+  target_link_libraries(backend_test_node error_resolution_diagnoser_ros2_lib cpprestsdk::cpprest ${Boost_LIBRARIES})
+  target_link_libraries(robotevent_test_node error_resolution_diagnoser_ros2_lib cpprestsdk::cpprest ${Boost_LIBRARIES})
+  target_link_libraries(statemanager_test_node error_resolution_diagnoser_ros2_lib cpprestsdk::cpprest ${Boost_LIBRARIES})
 endif()
 
 ament_package()
