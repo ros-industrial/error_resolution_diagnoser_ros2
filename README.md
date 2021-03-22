@@ -1,6 +1,6 @@
 # error_resolution_diagnoser_ros2 Documentation 
 
-[![Build Status](https://jenkins.cognicept.systems/buildStatus/icon?job=cognicept-ros2-agent-pipeline)](https://jenkins.cognicept.systems/job/cognicept-ros2-agent-pipeline/)  [![Coverage Status](http://34.87.159.179:5000/coverage/cognicept-ros2-agent-pipeline)](http://34.87.159.179:5000/coverage/cognicept-ros2-agent-pipeline)
+[![Build Status](https://travis-ci.org/cognicept-admin/error_resolution_diagnoser_ros2.svg?branch=master)](https://travis-ci.org/cognicept-admin/error_resolution_diagnoser_ros2) [![Coverage Status](http://34.87.159.179:5000/coverage/cognicept-ros2-agent-pipeline)](http://34.87.159.179:5000/coverage/cognicept-ros2-agent-pipeline)
 
 Hello there! Thanks for checking out the documentation. This particular document is a user's guide. If you are more interested in what the `error_resolution_diagnoser_ros2` is designed for, and the architecture, please take a look at the introduction document [here][7]!
 
