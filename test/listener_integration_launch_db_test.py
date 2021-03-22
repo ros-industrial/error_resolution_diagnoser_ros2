@@ -17,6 +17,8 @@ import rcl_interfaces.msg
 LOGID = 0
 os.environ['AGENT_TYPE'] = 'DB'
 os.environ['AGENT_MODE'] = 'JSON_TEST'
+os.environ['ECS_API'] = 'http://0.0.0.0:8000'
+os.environ['ECS_ROBOT_MODEL'] = 'ROS2_Turtlebot3'
 
 def generate_test_description(ready_fn):
     # Necessary to get real-time stdout from python processes but we are not using it:
