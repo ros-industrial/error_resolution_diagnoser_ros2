@@ -206,6 +206,86 @@ TEST(BackEndApiTestSuite, statusFalseTest)
   infile.close();
 }
 
+TEST(BackEndApiTestSuite, postTest)
+{
+  // Set mode to POST
+  char agent_mode[50] = "AGENT_MODE=POST_TEST";
+  char post_api[200] = "AGENT_POST_API=https://postman-echo.com";
+  putenv(agent_mode);
+  putenv(post_api);
+
+  // Create new BackendApi instance
+  BackendApi post_api_instance;
+
+  // Push event
+  post_api_instance.push_event_log(sample_log);
+
+  // Set log folder
+  setLogFolder();
+
+  // Get log file
+  int log_id = 1;
+  std::string filename = log_name + std::to_string(log_id) + log_ext;
+
+  // Check if file exists
+  std::ifstream infile(filename);
+  bool fileflag = infile.good();
+  ASSERT_TRUE(fileflag);
+}
+
+TEST(BackEndApiTestSuite, postStatusTest)
+{
+  // Set mode to POST
+  char agent_mode[50] = "AGENT_MODE=POST_TEST";
+  char post_api[200] = "AGENT_POST_API=https://postman-echo.com";
+  putenv(agent_mode);
+  putenv(post_api);
+
+  // Create new BackendApi instance
+  BackendApi post_status_api_instance;
+
+  // Push status
+  post_status_api_instance.push_status(true, json::value::string(telemetry));
+
+  // Set log folder
+  setLogFolder();
+
+  // Get log file
+  std::string filename = log_name + "Status" + log_ext;
+  std::cout << "Checking: " << filename << std::endl;
+
+  // Check if file exists
+  std::ifstream infile(filename);
+  bool fileflag = infile.good();
+  ASSERT_TRUE(fileflag);
+
+  // Stream to store read JSON
+  utility::stringstream_t stream;
+  // String to hold single line of read file
+  std::string status_line;
+
+  // Read file
+  while (getline(infile, status_line))
+  {
+    // Output the text from the file
+    stream << status_line;
+  }
+
+  // Parse JSON string
+  json::value status_log = json::value::parse(stream);
+
+  // Create key and get value
+  utility::string_t msgKey(utility::conversions::to_string_t("message"));
+  std::string message_value;
+  message_value = status_log[msgKey].as_string();
+
+  // Check if message is correct
+  ASSERT_EQ(message_value, "Online");
+
+  // Close file
+  infile.close();
+}
+
 int main(int argc, char **argv)
 {
   // Set log folder

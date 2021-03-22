@@ -10,8 +10,15 @@ pipeline{
       steps{
         echo 'building tests'
         sh '''
-           ls
            sh cognicept-runtest.sh
+           '''
+      }
+    }
+    stage('--cd--'){
+      steps{
+        echo 'Performing CD'
+        sh '''
+           sh cd.sh
            '''
       }
     }
@@ -19,7 +26,6 @@ pipeline{
     steps {
       echo 'extracting test results - 2'
         sh '''
-           ls
            sh ros2-test.sh
            '''
     }
