@@ -23,6 +23,7 @@ env:
    - ECS_API=http://127.0.0.1:8000
    - AGENT_POST_API=https://postman-echo.com
    - ECS_DB_LOC=error_classification_server/ecs.db
+   - CODE_COVERAGE="coveralls.io"
   matrix:
     - USE_DEB=true  
       ROS_DISTRO="dashing" 
@@ -40,7 +41,9 @@ before_install:
 
 install:
   - git clone https://github.com/cognicept-admin/error_classification_server.git  
-  - git clone https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
+  #- git clone https://github.com/ros-industrial/industrial_ci.git .industrial_ci -b master
+  - git clone --quiet --depth 1 https://github.com/Briancbn/industrial_ci.git .industrial_ci -b pr-coverage
+
 
 before_script:
   - sudo apt-get update
